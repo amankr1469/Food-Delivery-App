@@ -1,0 +1,19 @@
+<h1>Sign Up</h1>
+<%= form_with model: @user, url: "signup" do |f| %>
+  <%= f.label :email %>
+  <%= f.email_field :email %><br>
+
+  <%= f.label :password %>
+  <%= f.password_field :password %><br>
+
+  <%= f.label :password_confirmation %>
+  <%= f.password_field :password_confirmation %><br>
+
+  <div>
+    <%= f.label :role %>
+    <%= f.select :role, options_for_select([['Customer', 'customer'], ['Admin', 'admin'], ['Delivery', 'delivery']]) %>
+  </div>
+
+  <%= f.submit 'Sign Up' %>
+<% end %>
+
