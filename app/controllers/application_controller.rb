@@ -5,5 +5,4 @@ class ApplicationController < ActionController::Base
     render html: "bhature with lassi"
   end
 
-
 end
