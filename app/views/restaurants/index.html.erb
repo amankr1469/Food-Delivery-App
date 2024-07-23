@@ -2,6 +2,8 @@
 
 <h1>Restaurants</h1>
 
+<%= render 'homes/navbar', form_action: users_search_path %>
+
 <table>
   <thead>
     <tr>
@@ -13,8 +15,6 @@
       <th>Description</th>
       <th>Opening hours</th>
       <th>Delivery radius</th>
-      <th>Logo url</th>
-      <th>Menu url</th>
       <th colspan="3"></th>
     </tr>
   </thead>
@@ -36,8 +36,6 @@
         <td><%= restaurant.description %></td>
         <td><%= restaurant.opening_hours %></td>
         <td><%= restaurant.delivery_radius %></td>
-        <td><%= restaurant.logo_url %></td>
-        <td><%= restaurant.menu_url %></td>
         <td><%= link_to 'Show', restaurant %></td>
         <td><%= link_to 'Edit', edit_restaurant_path(restaurant) %></td>
         <td><%= link_to 'Destroy', restaurant, method: :delete, data: { confirm: 'Are you sure?' } %></td>

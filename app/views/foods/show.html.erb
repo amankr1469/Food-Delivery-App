@@ -16,24 +16,13 @@
 </p>
 
 <p>
-  <strong>Restaurant:</strong>
-  <%= @food.restaurant_id %>
-</p>
-
-<p>
   <strong>Category:</strong>
   <%= @food.category %>
 </p>
 
 <p>
-  <strong>Raing:</strong>
-  <%= @food.raing %>
-</p>
-
-<p>
-  <strong>Image url:</strong>
-  <%= @food.image_url %>
+  <%= image_tag(@food.image, style: 'width: 100px; height: 100px;') %>
 </p>
 
 <%= link_to 'Edit', edit_food_path(@food) %> |
-<%= link_to 'Back', foods_path %>
+<%= link_to 'Back', request.referer %>

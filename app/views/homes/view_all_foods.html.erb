@@ -1,0 +1,19 @@
+<h1>Search Results</h1>
+
+<h2>Restaurants</h2>
+<% if @food_results  %>
+  <ul>
+    <% @food_results.each do |food| %>
+      <li>
+        <h3><%= food.name %></h3>
+        <% if food.image_url.present? %>
+          <p><%= image_tag(food.image_url, style: 'width: 100px; height: 100px;' , alt: "#{food.name} Logo") %></p>
+        <% else %>
+          <p>No logo available</p>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No food found</p>
+<% end %>

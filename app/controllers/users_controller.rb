@@ -1,5 +1,8 @@
 class UsersController < ApplicationController
   
+  before_action :authenticate_request, only: [:profile, :update, :destroy]
+  before_action :set_user, only: [:profile, :update, :destroy]
+
   def create
     @user = User.new(user_params)
 
@@ -10,17 +13,7 @@ class UsersController < ApplicationController
     end
   end
 
-  def profile
-    
-  end
-
   def register
-  end
-
-  def user_params
-    puts params
-    
-    params.permit(:email, :password, :password_confirmation, :role)
   end
 
   def login
@@ -39,11 +32,11 @@ class UsersController < ApplicationController
       }
 
       if @user.role == 'admin'
-        redirect_to restaurants_path, status: :ok
+        redirect_to restaurants_path
       elsif @user.role == 'customer'
-        redirect_to root_path, status: :ok
+        redirect_to root_path
       else 
-        redirect_to root_path, status: :ok
+        redirect_to root_path
       end
       
     else
@@ -54,6 +47,36 @@ class UsersController < ApplicationController
   
   def signout
     cookies.delete(:token)
-    redirect_to users_login_path, status: :ok
+    redirect_to users_login_path
+  end
+
+  def profile
+    
+  end
+
+  def update
+    if @user.update(edit_user_params)
+      redirect_to root_path, notice: 'User details updated'
+    else
+      render :profile
+    end
+  end
+
+  def destroy
+    
+  end
+
+  private 
+
+  def set_user 
+    @user = @current_user
+  end
+
+  def user_params
+    params.permit(:email, :password, :password_confirmation, :role)
+  end
+
+  def edit_user_params
+    params.require(:user).permit(:name, :email)
   end
 end

@@ -3,7 +3,7 @@
 <%= render 'form', user: @user %>
 
 <div>
-    <%= link_to 'Back', root_path %> 
+     <%= link_to 'Back', request.referer || users_login_path, class: 'btn btn-secondary' %>
     <br>
     <%= link_to 'Destroy', method: :delete, data: { confirm: 'Are you sure?' } %>
 </div> 

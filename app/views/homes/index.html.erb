@@ -1,6 +1,6 @@
 <p id="notice"><%= notice %></p>
 
-<%= render 'homes/navbar' %>
+<%= render 'homes/navbar', form_action: users_search_path %>
 
 <h1>Homes</h1>
 
@@ -16,7 +16,7 @@
           <div class="card-body">
             <h5 class="card-title"><%= restaurant.name %><</h5>
             <p class="card-text"><%= restaurant.description %></p>
-            <a href="#" class="btn btn-primary">Check Food</a>
+            <%= link_to 'Check Food', users_restaurant_path(restaurant.id), class: "btn btn-primary" %> 
           </div>
         <% end %>
     </div>
@@ -26,13 +26,18 @@
     <h2>Crazy Foods</h2>
 <div class="card" style="width: 18rem;">
     <% @foods.each do |food| %>
-    <%# <img class="card-img-top" src="..." alt="Card image cap"> %>
+        <% if food.image.present? %>
+          <%= image_tag(food.image, style: 'width: 100px; height: 100px;') %>
+        <% else %>
+          <h3>No image available</h3>
+          <%end%>
   <div class="card-body">
     <h5 class="card-title"><%= food.name %></h5>
     <h6 class="card-subtitle mb-2 text-muted"><%= food.description %></h6>
 
-    <%# <%= link_to '+', _path, class: "btn btn-outline-danger btn-sm" %> 
-    <%# <%= link_to '-', _path, class: "btn btn-outline-danger btn-sm" %> 
+<%= button_to '+', users_add_path(food_id: food.id), method: :post, class: 'btn btn-primary' %>
+<%= button_to '-', users_remove_path(food_id: food.id), method: :post, class: 'btn btn-primary' %>
+
   </div>
    <% end %>
 </div>

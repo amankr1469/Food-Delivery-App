@@ -1,17 +1,18 @@
 class RestaurantsController < ApplicationController
-  before_action :set_restaurant, only: %i[ show edit update destroy ]
   before_action :authenticate_request
+  before_action :set_user
+  before_action :set_restaurant, only: %i[ show edit update destroy ]
   before_action :admin_only
-  # before_action :correct_user
+  before_action :correct_user, only: %i[ show edit update destroy ]
 
   #This will load all the restautants of a particular admin
   def index
-    @restaurants = Restaurant.all
+    @restaurants = Restaurant.where("user_id = ?", @user.id)
   end
 
   #This will show food items in that particular restaurants
   def show
-    @foods = Food.all
+    @foods = Food.where("restaurant_id = ?", @restaurant.id)
   end
 
   #This will search name of particular restaurant created by that user
@@ -20,9 +21,10 @@ class RestaurantsController < ApplicationController
   end
 
   # Result of search
-  def results
+  def search
     @query = params[:q]
-    @results = perform_search(@query)
+    @results = perform_search
+    render :index
   end
 
   # Add new restaurant
@@ -38,6 +40,7 @@ class RestaurantsController < ApplicationController
 
   def create
     @restaurant = Restaurant.new(restaurant_params)
+    @restaurant.user = @current_user
 
     respond_to do |format|
       if @restaurant.save
@@ -77,20 +80,24 @@ class RestaurantsController < ApplicationController
       @restaurant = Restaurant.find(params[:id])
     end
 
+    def set_user
+      @user = @current_user
+    end
+
     def restaurant_params
-      params.require(:restaurant).permit(:user_id, :name,:location, :pincode, :contact_number, :email, :description, :opening_hours, :delivery_radius, :logo_url, :menu_url, :image)
+      params.require(:restaurant).permit(:name,:location, :pincode, :contact_number, :email, :description, :opening_hours, :delivery_radius, :image)
     end
 
     def perform_search
       results = []
-      results += Restaurant.where("user_id = ? AND name LIKE ?", current_user.id, "%#{query}%")
+      results += Restaurant.where("user_id = ? AND name LIKE ?", @current_user.id, "%#{@query}%")
       results
     end
 
     def correct_user
-      @restaurant = @current_user.restaurant.find_by(id: params[:id])
-      if @restaurant.nil?
-        redirect_to restaurants_path, alert: "Not authorized to access this restaurant."
+      unless @restaurant.user_id == @current_user.id
+        flash[:alert] = 'Not authorized to access this restaurant.'
+        redirect_to restaurants_path
       end
     end
 end

@@ -10,11 +10,7 @@
       </ul>
     </div>
   <% end %>
-
-  <div class="field">
-    <%= form.number_field :user_id, value: @current_user.id, type: :hidden %>
-  </div>
-
+  
   <div class="field">
     <%= form.label :name %>
     <%= form.text_field :name %>
@@ -58,16 +54,6 @@
   <div class="field">
     <%= form.label :delivery_radius %>
     <%= form.number_field :delivery_radius %>
-  </div>
-
-  <div class="field">
-    <%= form.label :logo_url %>
-    <%= form.text_field :logo_url %>
-  </div>
-
-  <div class="field">
-    <%= form.label :menu_url %>
-    <%= form.text_field :menu_url %>
   </div>
 
   <div class="actions">

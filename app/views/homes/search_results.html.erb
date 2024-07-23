@@ -7,13 +7,16 @@
       <li>
         <h3><%= restaurant.name %></h3>
         <% if restaurant.image.present? %>
-          <p><%= image_tag(restaurant.image, alt: "#{restaurant.name} Logo") %></p>
+          <p><%= image_tag(restaurant.image, style: 'width: 100px; height: 100px;' , alt: "#{restaurant.name} Logo") %></p>
         <% else %>
           <p>No logo available</p>
         <% end %>
+        <%= link_to 'Check Food', users_restaurant_path(restaurant.id), class: "btn btn-primary" %> 
       </li>
     <% end %>
   </ul>
+
+  <%= link_to 'View more', users_search_restaurant_path(q: params[:q]), class: "btn btn-outline-danger btn-sm" %> 
 <% else %>
   <p>No restaurants found</p>
 <% end %>
@@ -25,7 +28,7 @@
       <li>
         <h3><%= food.name %></h3>
         <% if food.image_url.present? %>
-          <p><%= image_tag(food.image_url, alt: "#{food.name} Image") %></p>
+          <p><%= image_tag(food.image_url , style: 'width: 100px; height: 100px;', alt: "#{food.name} Image") %></p>
         <% else %>
           <p>No image available</p>
         <% end %>
@@ -33,6 +36,8 @@
       </li>
     <% end %>
   </ul>
+
+    <%= link_to 'View more', users_search_food_path(q: params[:q]), class: "btn btn-outline-danger btn-sm" %> 
 <% else %>
   <p>No foods found</p>
 <% end %>

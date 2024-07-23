@@ -17,6 +17,7 @@ class FoodsController < ApplicationController
 
   def create
     @food = Food.new(food_params)
+    @food.restaurant = Restaurant.find_by(params[:id])
 
     respond_to do |format|
       if @food.save
@@ -56,6 +57,6 @@ class FoodsController < ApplicationController
     end
 
     def food_params
-      params.require(:food).permit(:name, :description, :price, :restaurant_id, :category, :raing, :image_url)
+      params.require(:food).permit(:name, :description, :price, :category, :image)
     end
 end

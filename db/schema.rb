@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_07_20_131009) do
+ActiveRecord::Schema.define(version: 2024_07_23_193800) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -47,12 +47,11 @@ ActiveRecord::Schema.define(version: 2024_07_20_131009) do
     t.string "name"
     t.text "description"
     t.integer "price"
-    t.integer "restaurant_id"
     t.string "category"
-    t.float "raing"
-    t.string "image_url"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "restaurant_id", null: false
+    t.index ["restaurant_id"], name: "index_foods_on_restaurant_id"
   end
 
   create_table "homes", force: :cascade do |t|
@@ -60,8 +59,17 @@ ActiveRecord::Schema.define(version: 2024_07_20_131009) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
+  create_table "orders", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.json "food_quantities"
+    t.string "address"
+    t.decimal "total_amount"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_orders_on_user_id"
+  end
+
   create_table "restaurants", force: :cascade do |t|
-    t.integer "user_id"
     t.string "location"
     t.integer "pincode"
     t.integer "contact_number"
@@ -69,11 +77,11 @@ ActiveRecord::Schema.define(version: 2024_07_20_131009) do
     t.text "description"
     t.string "opening_hours"
     t.integer "delivery_radius"
-    t.string "logo_url"
-    t.string "menu_url"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.string "name"
+    t.bigint "user_id", null: false
+    t.index ["user_id"], name: "index_restaurants_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -84,11 +92,11 @@ ActiveRecord::Schema.define(version: 2024_07_20_131009) do
     t.integer "contact_number"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.string "AddLastnameToUsers"
-    t.string "lastname"
-    t.string "firstname"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id" 
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "foods", "restaurants"
+  add_foreign_key "orders", "users"
+  add_foreign_key "restaurants", "users"
 end

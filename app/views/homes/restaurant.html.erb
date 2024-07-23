@@ -1,0 +1,32 @@
+<div class="container">
+  <h1>Restaurant Details</h1>
+  
+  <div class="card mb-4">
+    <div class="card-header">
+      <h2><%= @restaurant.name %></h2>
+    </div>
+    <div class="card-body">
+      <% if @restaurant.image.present? %>
+        <div class="text-center mb-4">
+          <%= image_tag(@restaurant.image, alt: @restaurant.name, style: 'width: 150px; height: 150px;') %>
+        </div>
+      <% else %>
+        <div class="text-center mb-4">
+          <h3>No logo available</h3>
+        </div>
+      <% end %>
+
+      <p><strong>Location:</strong> <%= @restaurant.location %></p>
+      <p><strong>Pincode:</strong> <%= @restaurant.pincode.present? ? @restaurant.pincode : "Not available" %></p>
+      <p><strong>Contact Number:</strong> <%= @restaurant.contact_number %></p>
+      <p><strong>Email:</strong> <%= mail_to @restaurant.email %></p>
+      <p><strong>Description:</strong> <%= @restaurant.description %></p>
+      <p><strong>Opening Hours:</strong> <%= @restaurant.opening_hours %></p>
+      <p><strong>Delivery Radius:</strong> <%= @restaurant.delivery_radius %> km</p>
+      
+      <hr>
+    </div>
+  </div>
+  
+  <%= link_to 'Back to Home', root_path, class: 'btn btn-secondary' %>
+</div>

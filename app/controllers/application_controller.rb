@@ -10,15 +10,12 @@ class ApplicationController < ActionController::Base
 
   def authenticate_request
     token = cookies[:token]
-    
     if token
       decoded_token = JsonWebToken.decode(token)
-      # puts "Token parsed got #{JsonWebToken.decode(token)}"
-  
       @current_user = User.find_by(id: decoded_token['user_id'])
-
+      @current_user
     else 
-      redirect_to users_login_path 
+      redirect_to users_login_path, alert: 'Please log in to continue.'
     end
   end
 
