@@ -1,0 +1,38 @@
+<h1>Search Results</h1>
+
+<h2>Restaurants</h2>
+<% if @results && @results[:restaurants].any? %>
+  <ul>
+    <% @results[:restaurants].each do |restaurant| %>
+      <li>
+        <h3><%= restaurant.name %></h3>
+        <% if restaurant.image.present? %>
+          <p><%= image_tag(restaurant.image, alt: "#{restaurant.name} Logo") %></p>
+        <% else %>
+          <p>No logo available</p>
+        <% end %>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No restaurants found</p>
+<% end %>
+
+<h2>Foods</h2>
+<% if @results && @results[:foods].any? %>
+  <ul>
+    <% @results[:foods].each do |food| %>
+      <li>
+        <h3><%= food.name %></h3>
+        <% if food.image_url.present? %>
+          <p><%= image_tag(food.image_url, alt: "#{food.name} Image") %></p>
+        <% else %>
+          <p>No image available</p>
+        <% end %>
+        <p>Price: <%= food.price %></p>
+      </li>
+    <% end %>
+  </ul>
+<% else %>
+  <p>No foods found</p>
+<% end %>

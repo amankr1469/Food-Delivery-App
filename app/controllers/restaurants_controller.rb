@@ -1,5 +1,8 @@
 class RestaurantsController < ApplicationController
   before_action :set_restaurant, only: %i[ show edit update destroy ]
+  before_action :authenticate_request
+  before_action :admin_only
+  # before_action :correct_user
 
   #This will load all the restautants of a particular admin
   def index
@@ -75,13 +78,19 @@ class RestaurantsController < ApplicationController
     end
 
     def restaurant_params
-      params.require(:restaurant).permit(:user_id, :location, :pincode, :contact_number, :email, :description, :opening_hours, :delivery_radius, :logo_url, :menu_url)
+      params.require(:restaurant).permit(:user_id, :name,:location, :pincode, :contact_number, :email, :description, :opening_hours, :delivery_radius, :logo_url, :menu_url, :image)
     end
 
     def perform_search
       results = []
-      results += Restaurant.where("name LIKE ?", "%#{query}%", "%#{query}%")
-      results += Food.where("name LIKE ?", "%#{query}%")
+      results += Restaurant.where("user_id = ? AND name LIKE ?", current_user.id, "%#{query}%")
       results
+    end
+
+    def correct_user
+      @restaurant = @current_user.restaurant.find_by(id: params[:id])
+      if @restaurant.nil?
+        redirect_to restaurants_path, alert: "Not authorized to access this restaurant."
+      end
     end
 end

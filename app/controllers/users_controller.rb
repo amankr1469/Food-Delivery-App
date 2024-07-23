@@ -10,6 +10,10 @@ class UsersController < ApplicationController
     end
   end
 
+  def profile
+    
+  end
+
   def register
   end
 

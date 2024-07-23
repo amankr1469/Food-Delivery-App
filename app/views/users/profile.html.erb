@@ -1,0 +1,9 @@
+<h1>Edit Profile</h1>
+
+<%= render 'form', user: @user %>
+
+<div>
+    <%= link_to 'Back', root_path %> 
+    <br>
+    <%= link_to 'Destroy', method: :delete, data: { confirm: 'Are you sure?' } %>
+</div> 

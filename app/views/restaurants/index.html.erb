@@ -23,10 +23,16 @@
     <% @restaurants.each do |restaurant| %>
       <tr>
         <td><%= restaurant.user_id %></td>
+        <td><%= restaurant.name %></td>
         <td><%= restaurant.location %></td>
         <td><%= restaurant.pincode %></td>
         <td><%= restaurant.contact_number %></td>
         <td><%= restaurant.email %></td>
+        <% if restaurant.image.present? %>
+          <td><%= image_tag(restaurant.image, style: 'width: 100px; height: 100px;') %></td>
+        <% else %>
+          <td>No image available</td>
+        <% end %>
         <td><%= restaurant.description %></td>
         <td><%= restaurant.opening_hours %></td>
         <td><%= restaurant.delivery_radius %></td>
