@@ -1,35 +1,17 @@
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Navbar</a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Link</a>
-        </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            Dropdown
-          </a>
-          <ul class="dropdown-menu">
-            <li><%= link_to 'Profile', users_profile_path %></li>
-            <% if @current_user&.role == 'admin' %>
-              <li>Admin</li>
-            <% end %>
-            <li><hr class="dropdown-divider"></li>
-            <li><%= link_to 'Logout', users_signout_path, class: "btn btn-outline-danger btn-sm" %></li>
-          </ul>
-        </li>
+<nav class="bg-gray-100 border-b border-gray-200">
+  <div class="container mx-auto px-4 py-2 flex items-center justify-between">
+    <h2 class="text-lg font-semibold text-blue-600" >GoFoodie</h2>
+
+    <div class="flex  lg:flex lg:items-center lg:space-x-4" id="navbarSupportedContent">
+      <ul class="flex flex-row lg:flex-row lg:space-x-4">
+        <li class="py-1"><%= link_to 'Profile', users_profile_path, class: "block px-4 py-2 text-gray-700 hover:bg-gray-100" %></li>
+        <li class="py-1"><%= link_to 'Logout', users_signout_path, class: "block px-4 py-2 text-gray-700 hover:bg-gray-100" %></li>
       </ul>
-      <form class="d-flex" role="search" action="<%= form_action %>">
-        <input class="form-control me-2" type="search" name="q" placeholder="Search" aria-label="Search">
-        <button class="btn btn-outline-success" type="submit">Search</button>
+      <form class="flex items-center space-x-2" role="search" action="<%= form_action %>">
+        <input class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" type="search" name="q" placeholder="Search" aria-label="Search">
+        <button class="px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" type="submit">Search</button>
       </form>
     </div>
   </div>
 </nav>
+

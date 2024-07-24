@@ -1,7 +1,7 @@
 class HomesController < ApplicationController
   before_action :authenticate_request, except: [:index, :search, :search_results, :view_all_restaurants, :view_all_foods, :restaurant]
   before_action :set_home_restaurants, :set_home_food
-  before_action :load_cart, only: [:add_to_cart, :remove_from_cart, :checkout]
+  before_action :load_cart, only: [:add_to_cart, :remove_from_cart, :cart]
 
   #Root URL
   def index
@@ -51,6 +51,9 @@ class HomesController < ApplicationController
   end
   end
 
+  def cart
+  end
+
   def checkout
     
   end
@@ -80,18 +83,18 @@ class HomesController < ApplicationController
 
   def restaurant
     @restaurant = Restaurant.find(params[:id])
-    #@food_items = @restaurant.foods
-    @food_items = Food.where("restaurant_id = ?", params[:id])
+    @food_items = @restaurant.foods
+    # @food_items = Food.where("restaurant_id = ?", params[:id])
   end
 
   private
 
   def set_home_restaurants
-    @restaurants = Restaurant.all
+    @restaurants = Restaurant.all.limit(6)
   end
 
   def set_home_food
-    @foods = Food.all
+    @foods = Food.all.limit(6)
   end
 
   def perform_search

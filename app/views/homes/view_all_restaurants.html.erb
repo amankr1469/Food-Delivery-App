@@ -1,21 +1,24 @@
-<h1>Search Results</h1>
+  <h1 class="text-4xl font-bold text-center text-blue-600 mb-8">Search Results</h1>
 
-<h2>Restaurants</h2>
-<% if @restaurant_results  %>
-  <ul>
-    <% @restaurant_results.each do |restaurant| %>
-      <li>
-        <h3><%= restaurant.name %></h3>
-        <% if restaurant.image.present? %>
-          <p><%= image_tag(restaurant.image, style: 'width: 100px; height: 100px;' , alt: "#{restaurant.name} Logo") %></p>
-        <% else %>
-          <p>No logo available</p>
+  <div class="mb-8">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Restaurants</h2>
+    <% if @restaurant_results.any? %>
+      <ul class="space-y-4">
+        <% @restaurant_results.each do |restaurant| %>
+          <li class="bg-white border border-gray-200 rounded-lg shadow-md p-4">
+            <h3 class="text-xl font-semibold text-gray-900 mb-2"><%= restaurant.name %></h3>
+            <% if restaurant.image.present? %>
+              <div class="mb-4">
+                <%= image_tag(restaurant.image, class: 'w-24 h-24 object-cover rounded', alt: "#{restaurant.name} Logo") %>
+              </div>
+            <% else %>
+              <p class="text-gray-500 mb-4">No logo available</p>
+            <% end %>
+            <%= link_to 'Check Food', users_restaurant_path(restaurant.id), class: "inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %> 
+          </li>
         <% end %>
-        <%= link_to 'Check Food', users_restaurant_path(restaurant.id), class: "btn btn-primary" %> 
-      </li>
+      </ul>
+    <% else %>
+      <p class="text-gray-500">No restaurants found</p>
     <% end %>
-  </ul>
-
-<% else %>
-  <p>No restaurants found</p>
-<% end %>
+  </div>

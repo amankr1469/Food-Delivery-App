@@ -1,0 +1,13 @@
+  <div data-controller="previews" class="field">
+    <%= form.label :image %>
+    <%= form.file_field :image, direct_uplaod: true,
+    data: { previews_target: "input", action: "change->previews#preview" } %>
+
+    <div class="image-container">
+    <% if @user.image.attached? %>
+      <%= image_tag @user.image, data: { previews_target: "preview" }, class: "image" %>
+    <% else %>
+      <%= image_tag "", data: { previews_target: "preview" }, class: "image" %>
+    <% end %>
+  </div>
+ </div>  

@@ -1,19 +1,36 @@
-<h1>Sign Up</h1>
-<%= form_with model: @user, url: "signup" do |f| %>
-  <%= f.label :email %>
-  <%= f.email_field :email %><br>
+<div class="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+  <div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
+    <h1 class="text-blue-600 font-bold text-4xl mb-8 text-center">Sign Up</h1>
+    <%= form_with model: @user, url: "signup", html: { class: "space-y-4" } do |f| %>
+      <div>
+        <%= f.label :email, class: "block text-gray-700 font-medium" %>
+        <%= f.email_field :email, class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" %>
+      </div>
 
-  <%= f.label :password %>
-  <%= f.password_field :password %><br>
+      <div>
+        <%= f.label :password, class: "block text-gray-700 font-medium" %>
+        <%= f.password_field :password, class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" %>
+      </div>
 
-  <%= f.label :password_confirmation %>
-  <%= f.password_field :password_confirmation %><br>
+      <div>
+        <%= f.label :password_confirmation, class: "block text-gray-700 font-medium" %>
+        <%= f.password_field :password_confirmation, class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" %>
+      </div>
 
-  <div>
-    <%= f.label :role %>
-    <%= f.select :role, options_for_select([['Customer', 'customer'], ['Admin', 'admin'], ['Delivery', 'delivery']]) %>
+      <div>
+        <%= f.label :role, class: "block text-gray-700 font-medium" %>
+        <%= f.select :role, options_for_select([['Customer', 'customer'], ['Admin', 'admin'], ['Delivery', 'delivery']]), {}, class: "mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" %>
+      </div>
+
+      <div class="flex justify-center mt-8">
+        <%= f.submit 'Sign Up', class: "w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" %>
+      </div>
+    <% end %>
+
+<div class="flex justify-center items-center mt-4">
+  <h1 class="text-gray-700 font-medium mr-2">Already have an account?</h1>
+  <%= link_to 'Login', users_login_path, class: 'text-blue-600 hover:text-white-700 font-semibold' %>
+</div>
+
   </div>
-
-  <%= f.submit 'Sign Up' %>
-<% end %>
-
+</div>

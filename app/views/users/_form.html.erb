@@ -18,10 +18,12 @@
       <%= form.text_field :name %>
     </div>
 
-  <div class="field">
+  <%# <div class="field">
     <%= form.label :image %>
-    <%= form.file_field :image %>
-  </div>
+    <%# <%= form.file_field :image %>
+  <%# </div>   %>
+
+    <%= render "image_preview", form: form%>
 
     <div class="field">
       <%= form.label :email %>

@@ -1,19 +1,28 @@
-<h1>Search Results</h1>
+  <h1 class="text-4xl font-bold text-center text-blue-600 mb-8">Search Results</h1>
 
-<h2>Restaurants</h2>
-<% if @food_results  %>
-  <ul>
-    <% @food_results.each do |food| %>
-      <li>
-        <h3><%= food.name %></h3>
-        <% if food.image_url.present? %>
-          <p><%= image_tag(food.image_url, style: 'width: 100px; height: 100px;' , alt: "#{food.name} Logo") %></p>
-        <% else %>
-          <p>No logo available</p>
+  <div>
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Foods</h2>
+    <% if @food_results.any? %>
+      <ul class="space-y-4">
+        <% @food_results.each do |food| %>
+          <li class="bg-white border border-gray-200 rounded-lg shadow-md p-4">
+            <h3 class="text-xl font-semibold text-gray-900 mb-2"><%= food.name %></h3>
+            <% if food.image.present? %>
+              <div class="mb-4">
+                <%= image_tag(food.image, class: 'w-24 h-24 object-cover rounded', alt: "#{food.name} Image") %>
+              </div>
+            <% else %>
+              <p class="text-gray-500 mb-4">No image available</p>
+            <% end %>
+            <p class="text-gray-700 mb-4">Price: <%= food.price %></p>
+            <div class="flex gap-5">
+          <%= button_to '+', users_add_path(food_id: food.id), method: :post, class: 'btn btn-primary' %>
+          <%= button_to '-', users_remove_path(food_id: food.id), method: :post, class: 'btn btn-primary' %>
+          </div>
+          </li>
         <% end %>
-      </li>
+      </ul>
+    <% else %>
+      <p class="text-gray-500">No foods found</p>
     <% end %>
-  </ul>
-<% else %>
-  <p>No food found</p>
-<% end %>
+  </div>

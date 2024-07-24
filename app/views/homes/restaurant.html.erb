@@ -27,6 +27,23 @@
       <hr>
     </div>
   </div>
-  
+
+  <div class="card" style="width: 18rem;">
+    <% @food_items.each do |food| %>
+        <% if food.image.present? %>
+          <%= image_tag(food.image, style: 'width: 100px; height: 100px;') %>
+        <% else %>
+          <h3>No image available</h3>
+          <%end%>
+  <div class="card-body">
+    <h5 class="card-title"><%= food.name %></h5>
+    <h6 class="card-subtitle mb-2 text-muted"><%= food.description %></h6>
+
+<%= button_to '+', users_add_path(food_id: food.id), method: :post, class: 'btn btn-primary' %>
+<%= button_to '-', users_remove_path(food_id: food.id), method: :post, class: 'btn btn-primary' %>
+
+  </div>
+   <% end %>
+</div>  
   <%= link_to 'Back to Home', root_path, class: 'btn btn-secondary' %>
 </div>

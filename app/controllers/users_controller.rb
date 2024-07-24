@@ -51,7 +51,9 @@ class UsersController < ApplicationController
   end
 
   def profile
-    
+    if !@current_user
+      redirect_to users_login_path
+    end
   end
 
   def update
@@ -63,9 +65,12 @@ class UsersController < ApplicationController
   end
 
   def destroy
-    
+    @user.destroy
+    respond_to do |format|
+      format.html { redirect_to users_signup_path, notice: "User was successfully destroyed." }
+    end
   end
-
+  
   private 
 
   def set_user 

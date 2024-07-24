@@ -1,0 +1,19 @@
+<h1>Your Order</h1>
+
+<%= form_with url: users_checkout_path, method: :post do %>
+  <h2>Cart</h2>
+  <% @cart.each do |food_id, item| %>
+    <div class="cart-item">
+      <h3><%= item["name"] %></h3>
+      <% if item["photo"] && item["photo"]["record"] && item["photo"]["record"]["image"] %>
+        <%= image_tag(item["photo"]["record"]["image"], style: 'width: 100px; height: 100px;') %>
+      <% else %>
+        <p>No image available</p>
+      <% end %>
+      <p>Price: <%= item["price"] %></p>
+      <p>Quantity: <%= item["quantity"] %></p>
+      <%= button_to 'Remove from Cart', users_remove_path(food_id: food_id), method: :post, class: 'btn btn-danger' %>
+    </div>
+  <% end %>
+  <%= submit_tag 'Checkout', class: 'btn btn-success' %>
+<% end %>
