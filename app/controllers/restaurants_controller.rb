@@ -16,14 +16,11 @@ class RestaurantsController < ApplicationController
   end
 
   #This will search name of particular restaurant created by that user
-  def search
-    
-  end
 
   # Result of search
-  def search
+  def results
     @query = params[:q]
-    @results = perform_search
+    @restaurants = perform_search
     render :index
   end
 

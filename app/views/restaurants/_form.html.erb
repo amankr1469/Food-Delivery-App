@@ -1,9 +1,8 @@
-<%= form_with(model: restaurant) do |form| %>
+<%= form_with(model: restaurant, local: true, class: "max-w-lg mx-auto p-8 bg-white rounded-lg shadow-md") do |form| %>
   <% if restaurant.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(restaurant.errors.count, "error") %> prohibited this restaurant from being saved:</h2>
-
-      <ul>
+    <div id="error_explanation" class="mb-6 bg-red-100 text-red-700 p-4 rounded-lg">
+      <h2 class="text-xl font-bold mb-2"><%= pluralize(restaurant.errors.count, "error") %> prohibited this restaurant from being saved:</h2>
+      <ul class="list-disc list-inside">
         <% restaurant.errors.each do |error| %>
           <li><%= error.full_message %></li>
         <% end %>
@@ -11,52 +10,52 @@
     </div>
   <% end %>
   
-  <div class="field">
-    <%= form.label :name %>
-    <%= form.text_field :name %>
+  <div class="mb-4">
+    <%= form.label :name, class: "block text-gray-700 font-bold mb-2" %>
+    <%= form.text_field :name, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
   </div>
 
-  <div class="field">
-    <%= form.label :location %>
-    <%= form.text_field :location %>
+  <div class="mb-4">
+    <%= form.label :location, class: "block text-gray-700 font-bold mb-2" %>
+    <%= form.text_field :location, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
   </div>
 
-  <div class="field">
-    <%= form.label :pincode %>
-    <%= form.number_field :pincode %>
+  <div class="mb-4">
+    <%= form.label :pincode, class: "block text-gray-700 font-bold mb-2" %>
+    <%= form.number_field :pincode, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
   </div>
 
-  <div class="field">
-    <%= form.label :contact_number %>
-    <%= form.number_field :contact_number %>
+  <div class="mb-4">
+    <%= form.label :contact_number, class: "block text-gray-700 font-bold mb-2" %>
+    <%= form.number_field :contact_number, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
   </div>
 
-  <div class="field">
-    <%= form.label :email %>
-    <%= form.text_field :email %>
+  <div class="mb-4">
+    <%= form.label :email, class: "block text-gray-700 font-bold mb-2" %>
+    <%= form.text_field :email, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
   </div>
 
-  <div class="field">
-    <%= form.label :description %>
-    <%= form.text_area :description %>
+  <div class="mb-4">
+    <%= form.label :description, class: "block text-gray-700 font-bold mb-2" %>
+    <%= form.text_area :description, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
   </div>
 
-    <div class="field">
-    <%= form.label :image %>
-    <%= form.file_field :image %>
+  <div class="mb-4">
+    <%= form.label :image, class: "block text-gray-700 font-bold mb-2" %>
+    <%= form.file_field :image, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
   </div>
 
-  <div class="field">
-    <%= form.label :opening_hours %>
-    <%= form.text_field :opening_hours %>
+  <div class="mb-4">
+    <%= form.label :opening_hours, class: "block text-gray-700 font-bold mb-2" %>
+    <%= form.text_field :opening_hours, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
   </div>
 
-  <div class="field">
-    <%= form.label :delivery_radius %>
-    <%= form.number_field :delivery_radius %>
+  <div class="mb-4">
+    <%= form.label :delivery_radius, class: "block text-gray-700 font-bold mb-2" %>
+    <%= form.number_field :delivery_radius, class: "shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" %>
   </div>
 
   <div class="actions">
-    <%= form.submit %>
+    <%= form.submit class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" %>
   </div>
 <% end %>

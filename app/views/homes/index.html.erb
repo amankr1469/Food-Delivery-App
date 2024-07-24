@@ -1,7 +1,9 @@
 <p id="notice"><%= notice %></p>
 
 <%= render 'homes/navbar', form_action: users_search_path %>
-<%= link_to 'Check Out', users_cart_path, class: "btn btn-outline-danger btn-sm" %> 
+        <div class="flex py-4 justify-end " >
+          <%= link_to 'Check Out', users_cart_path, class: "inline-block bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600" %>
+        </div>
     <h2 class="mt-3 mb-4 text-3xl font-bold text-blue-600">Restaurants near you</h2>
 
 <div class="flex flex-row flex-wrap gap-5">
@@ -22,8 +24,6 @@
     </div>
   <% end %>
 </div>
-
-
 
 
     <h2 class="mt-10 mb-4 text-3xl font-bold text-blue-600">Crazy Foods</h2>

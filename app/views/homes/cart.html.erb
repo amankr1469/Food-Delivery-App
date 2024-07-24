@@ -1,19 +1,41 @@
-<h1>Your Order</h1>
+<h1 class="text-2xl font-bold mb-4">Your Cart</h1>
 
-<%= form_with url: users_checkout_path, method: :post do %>
-  <h2>Cart</h2>
-  <% @cart.each do |food_id, item| %>
-    <div class="cart-item">
-      <h3><%= item["name"] %></h3>
-      <% if item["photo"] && item["photo"]["record"] && item["photo"]["record"]["image"] %>
-        <%= image_tag(item["photo"]["record"]["image"], style: 'width: 100px; height: 100px;') %>
-      <% else %>
-        <p>No image available</p>
-      <% end %>
-      <p>Price: <%= item["price"] %></p>
-      <p>Quantity: <%= item["quantity"] %></p>
-      <%= button_to 'Remove from Cart', users_remove_path(food_id: food_id), method: :post, class: 'btn btn-danger' %>
+<% if @food_items.empty? %>
+  <p class="text-gray-500">Your cart is empty.</p>
+<% else %>
+  <div class="space-y-4">
+    <% @total_amount = 0 %>
+    <% @food_items.each do |food| %>
+      <% quantity = @cart[food.id.to_s]["quantity"] %>
+      <% total_price = food.price * quantity %>
+      <% @total_amount += total_price %>
+      <div class="flex items-center border rounded-lg p-4 shadow-md bg-white">
+        <div class="w-16 h-16 mr-4">
+          <%= image_tag food.image, class: 'w-full h-full object-cover rounded-lg' %>
+        </div>
+        <div class="flex-grow">
+          <h2 class="text-xl font-semibold"><%= food.name %></h2>
+          <p class="text-gray-500"><%= number_to_currency(food.price) %></p>
+          <p class="text-gray-500">Quantity: <%= quantity %></p>
+          <p class="text-gray-500">Total: <%= number_to_currency(total_price) %></p>
+        </div>
+        <div>
+          <%= link_to 'Remove', users_remove_path(food_id: food.id), method: :delete, data: { confirm: 'Are you sure?' }, class: 'text-red-500 hover:text-red-700' %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <h2 class="text-xl font-semibold mt-4">Total Amount: <%= number_to_currency(@total_amount) %></h2>
+
+  <%= form_with url: users_checkout_path, method: :post, local: true, class: "mt-4 space-y-4" do |form| %>
+    <div class="field">
+      <%= form.label :address, "Shipping Address", class: "block text-gray-700 font-bold mb-2" %>
+      <%= form.text_area :address, required: true, class: "w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" %>
+    </div>
+    <%= form.hidden_field :total_amount, value: @total_amount %>
+    <div class="actions">
+      <%= form.submit "Place Order", class: "w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-600" %>
     </div>
   <% end %>
-  <%= submit_tag 'Checkout', class: 'btn btn-success' %>
 <% end %>

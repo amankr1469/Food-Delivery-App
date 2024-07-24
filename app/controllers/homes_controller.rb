@@ -1,7 +1,7 @@
 class HomesController < ApplicationController
   before_action :authenticate_request, except: [:index, :search, :search_results, :view_all_restaurants, :view_all_foods, :restaurant]
   before_action :set_home_restaurants, :set_home_food
-  before_action :load_cart, only: [:add_to_cart, :remove_from_cart, :cart]
+  before_action :initialize_cart, only: [:add_to_cart, :remove_from_cart, :cart]
 
   #Root URL
   def index
@@ -12,24 +12,19 @@ class HomesController < ApplicationController
     if @current_user
           
       food_id = params[:food_id]
-      food = Food.find(food_id)
 
       if @cart[food_id] 
         @cart[food_id]["quantity"] = (@cart[food_id]["quantity"] || 0) + 1
       else
      
       cart_item = {
-        id: food.id,
-        name: food.name,
-        price: food.price,
-        image: food.image,
         quantity: 1
       }
       @cart[food_id] = cart_item
     end
       
       save_cart
-      redirect_to root_path, notice: "#{food.name} added to cart."
+      redirect_back(fallback_location: root_path, notice: "Item added to cart.")
     else 
       redirect_to users_login_path
     end
@@ -45,17 +40,35 @@ class HomesController < ApplicationController
         @cart.delete(food_id) 
       end
       save_cart
-      redirect_to root_path, notice: "Item removed from cart." 
+      redirect_back(fallback_location: root_path, notice: "Item removed from cart.")
   else 
     redirect_to users_login_path
   end
   end
 
   def cart
+    load_cart
   end
 
   def checkout
-    
+    if @current_user
+      load_cart
+      order = Order.new(
+        user_id: @current_user.id,
+        food_quantities: @cart,
+        address: params[:address],
+        total_amount: params[:total_amount]
+      )
+      
+      if order.save
+        clear_cart
+        redirect_to root_path, notice: "Order placed successfully."
+      else
+        redirect_to cart_path, alert: "Failed to place order."
+      end
+    else
+      redirect_to users_login_path
+    end
   end
 
   def search 
@@ -104,7 +117,7 @@ class HomesController < ApplicationController
     results
   end
 
-  def load_cart
+  def initialize_cart
     cart_data = $redis.get(@current_user.id)
     @cart = cart_data.present? ? JSON.parse(cart_data) : {}
   end
@@ -117,4 +130,9 @@ class HomesController < ApplicationController
     $redis.del(@current_user.id)
   end
 
+  def load_cart
+    initialize_cart
+    food_ids = @cart.keys
+    @food_items = Food.where(id: food_ids)
+  end
 end

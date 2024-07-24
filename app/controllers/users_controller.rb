@@ -4,15 +4,21 @@ class UsersController < ApplicationController
   before_action :set_user, only: [:profile, :update, :destroy]
 
   def create
-    @user = User.new(user_params)
-
-    if @user.save
-      redirect_to users_login_path
+    existing_user = User.find_by(email: user_params[:email])
+  
+    if existing_user
+      render :register, notice: 'Email already exists'
     else
-      render :error
+      @user = User.new(user_params)
+  
+      if @user.save
+        redirect_to users_login_path
+      else
+        render :new
+      end
     end
   end
-
+  
   def register
   end
 
@@ -21,6 +27,11 @@ class UsersController < ApplicationController
   end
 
   def signin
+    if params[:email].blank? || params[:password].blank?
+      redirect_to users_login_path, notice: "Email and password must be provided"
+      return
+    end
+
     @user = User.find_by(email: params[:email])
 
     if @user && @user.authenticate(params[:password])
@@ -31,46 +42,54 @@ class UsersController < ApplicationController
         httponly: true,
       }
 
-      if @user.role == 'admin'
+      case @user.role
+      when 'admin'
         redirect_to restaurants_path
-      elsif @user.role == 'customer'
+      when 'customer'
         redirect_to root_path
-      else 
+      else
         redirect_to root_path
       end
-      
+
     else
-      error!('Unauthorized', 401)
-      render :new
+      redirect_to users_login_path, notice: "Invalid Credentials"
     end
   end
   
   def signout
-    cookies.delete(:token)
+    cookies.delete(:token) if cookies[:token]
     redirect_to users_login_path
   end
 
   def profile
-    if !@current_user
-      redirect_to users_login_path
+    unless @current_user
+      redirect_to users_login_path, alert: 'Please sign in to access this page'
     end
   end
 
   def update
+    if @user.nil?
+      redirect_to users_signup_path, alert: 'User not found'
+      return
+    end
     if @user.update(edit_user_params)
       redirect_to root_path, notice: 'User details updated'
     else
-      render :profile
+      render :profile, alert: 'Failed to update user details'
     end
   end
 
   def destroy
-    @user.destroy
-    respond_to do |format|
-      format.html { redirect_to users_signup_path, notice: "User was successfully destroyed." }
+    if @user.nil?
+      redirect_to users_register_path, alert: 'User not found'
+      return
     end
+
+    @user.destroy
+    redirect_to users_register_path, notice: 'User was successfully destroyed'
   end
-  
+
+
   private 
 
   def set_user 
