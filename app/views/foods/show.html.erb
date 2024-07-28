@@ -1,28 +1,39 @@
-<p id="notice"><%= notice %></p>
+<div class="p-6 max-w-4xl mx-auto bg-white shadow-md rounded-lg">
+  <p class="text-blue-500 mb-4"><%= notice %></p>
 
-<p>
-  <strong>Name:</strong>
-  <%= @food.name %>
-</p>
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold mb-4">Food Details</h1>
+    <p class="text-lg font-semibold mb-2">
+      <strong class="text-gray-600">Name:</strong> <%= @food.name %>
+    </p>
+    <p class="text-lg font-semibold mb-2">
+      <strong class="text-gray-600">Description:</strong> <%= @food.description %>
+    </p>
+    <p class="text-lg font-semibold mb-2">
+      <strong class="text-gray-600">Price:</strong> <%= number_to_currency(@food.price) %>
+    </p>
+    <p class="text-lg font-semibold mb-2">
+      <strong class="text-gray-600">Category:</strong> <%= @food.category %>
+    </p>
+  </div>
 
-<p>
-  <strong>Description:</strong>
-  <%= @food.description %>
-</p>
+  <div class="mb-6">
+            <% if @food.image.present? %>
+    <%= image_tag(@food.image, class: 'w-32 h-32 object-cover rounded-lg') %>
+        <% else %>
+          <div class="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center mr-4">
+            <span class="text-gray-500">No image</span>
+          </div>
+        <% end %>
 
-<p>
-  <strong>Price:</strong>
-  <%= @food.price %>
-</p>
+  </div>
 
-<p>
-  <strong>Category:</strong>
-  <%= @food.category %>
-</p>
+  <div class="flex space-x-4 items-center">
+    <div class="flex gap-5">
+    <%= link_to 'Edit', edit_food_path(@food), class: 'bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600' %>
+    <%= link_to 'Destroy', admin_restaurant_food_delete_path(id: @food.id), method: :delete, class: 'bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600' %>
+    </div>
+    <div><%= link_to 'Back', restaurants_url, class: 'bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400' %></div>
+  </div>
+</div>
 
-<p>
-  <%= image_tag(@food.image, style: 'width: 100px; height: 100px;') %>
-</p>
-
-<%= link_to 'Edit', edit_food_path(@food) %> |
-<%= link_to 'Back', request.referer %>

@@ -1,20 +1,20 @@
 class UsersController < ApplicationController
   
   before_action :authenticate_request, only: [:profile, :update, :destroy]
-  before_action :set_user, only: [:profile, :update, :destroy]
+  before_action :set_user, only: [:profile, :update, :destroy, :signout]
 
   def create
     existing_user = User.find_by(email: user_params[:email])
   
     if existing_user
-      render :register, notice: 'Email already exists'
+      redirect_to users_register_path, notice: 'Email already exists'
     else
       @user = User.new(user_params)
   
       if @user.save
         redirect_to users_login_path
       else
-        render :new
+        redirect_to users_register_path, notice: 'Choose strong credentials(Password: Minimun lenght 6)'
       end
     end
   end
@@ -33,6 +33,8 @@ class UsersController < ApplicationController
     end
 
     @user = User.find_by(email: params[:email])
+
+    cookies.delete(:token) if cookies[:token]
 
     if @user && @user.authenticate(params[:password])
       token = JsonWebToken.encode(user_id: @user.id)
@@ -72,10 +74,11 @@ class UsersController < ApplicationController
       redirect_to users_signup_path, alert: 'User not found'
       return
     end
+
     if @user.update(edit_user_params)
       redirect_to root_path, notice: 'User details updated'
     else
-      render :profile, alert: 'Failed to update user details'
+      render :profile, notice: 'Failed to update user details'
     end
   end
 

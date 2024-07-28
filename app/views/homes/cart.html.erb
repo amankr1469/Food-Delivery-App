@@ -19,8 +19,9 @@
           <p class="text-gray-500">Quantity: <%= quantity %></p>
           <p class="text-gray-500">Total: <%= number_to_currency(total_price) %></p>
         </div>
-        <div>
-          <%= link_to 'Remove', users_remove_path(food_id: food.id), method: :delete, data: { confirm: 'Are you sure?' }, class: 'text-red-500 hover:text-red-700' %>
+        <div class = "flex gap-5" >
+          <%= button_to '+', users_add_path(food_id: food.id), method: :post, class: 'bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600' %>
+          <%= button_to '-', users_remove_path(food_id: food.id), method: :post, class: 'bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600' %>
         </div>
       </div>
     <% end %>
@@ -38,4 +39,6 @@
       <%= form.submit "Place Order", class: "w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-600" %>
     </div>
   <% end %>
+   <br><br><br><br>
+  <%= link_to 'Back to Home', root_path , class: 'bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600' %> 
 <% end %>

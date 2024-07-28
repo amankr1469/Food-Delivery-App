@@ -20,7 +20,10 @@ class ApplicationController < ActionController::Base
   end
 
   def admin_only
-    render json: { error: 'Forbidden' }, status: :forbidden unless @current_user&.role == 'admin'
+    unless @current_user&.role == 'admin'
+      gif_path = Rails.root.join('public', 'forbidden.gif')
+      send_file gif_path, type: 'image/gif', disposition: 'inline'
+    end
   end
 
 end

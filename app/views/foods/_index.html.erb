@@ -20,9 +20,8 @@
           </div>
         <% end %>
         <div class="flex justify-between">
-          <%= link_to 'Show', food, class: 'text-blue-500 hover:text-blue-700 font-semibold' %>
-          <%= link_to 'Edit', edit_food_path(food), class: 'text-yellow-500 hover:text-yellow-700 font-semibold' %>
-          <%= link_to 'Destroy', food, method: :delete, data: { confirm: 'Are you sure?' }, class: 'text-red-500 hover:text-red-700 font-semibold' %>
+          <%= link_to 'Show', food, class: 'inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500' %>
+          <%= link_to 'Edit', edit_food_path(food), class: 'inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500' %>
         </div>
       </div>
     </div>
@@ -30,5 +29,5 @@
 </div>
 
 <div class="mt-6">
-  <%= link_to 'New Food', new_food_path, class: 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' %>
+  <%= link_to 'New Food', new_food_path(id: params[:id]), class: 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' %>
 </div>

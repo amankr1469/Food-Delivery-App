@@ -17,8 +17,6 @@ class FoodsController < ApplicationController
 
   def create
     @food = Food.new(food_params)
-    @food.restaurant = Restaurant.find_by(params[:id])
-
     respond_to do |format|
       if @food.save
         format.html { redirect_to food_url(@food), notice: "Food was successfully created." }
@@ -46,7 +44,7 @@ class FoodsController < ApplicationController
     @food.destroy
 
     respond_to do |format|
-      format.html { redirect_to foods_url, notice: "Food was successfully destroyed." }
+      format.html { redirect_to restaurants_url, notice: "Food was successfully destroyed." }
       format.json { head :no_content }
     end
   end
@@ -57,6 +55,6 @@ class FoodsController < ApplicationController
     end
 
     def food_params
-      params.require(:food).permit(:name, :description, :price, :category, :image)
+      params.require(:food).permit(:name, :description, :price, :category, :image, :restaurant_id)
     end
 end

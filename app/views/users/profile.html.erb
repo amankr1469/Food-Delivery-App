@@ -1,12 +1,12 @@
-<p id="notice"><%= notice %></p>
-
-<h1>Edit Profile</h1>
+<p id="notice" class="text-sm text-green-700 bg-green-100 rounded-lg"><%= notice %></p>
 
 <%= render 'form', user: @user %>
 
-<div>
-     <%= link_to 'Back', request.referer || users_login_path, class: 'btn btn-secondary' %>
-    <br>
-    <%= link_to 'Destroy', users_delete_path, method: :delete, class: 'btn btn-danger' %>
-
-</div> 
+<div class="flex flex-row gap-4 mt-6">
+  <div>
+    <%= link_to 'Back', request.referer || users_login_path, class: 'bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline' %>
+  </div>
+  <div>
+    <%= link_to 'Destroy', users_delete_path, method: :delete, class: 'bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline' %>
+  </div>
+</div>

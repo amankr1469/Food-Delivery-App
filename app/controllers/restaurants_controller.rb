@@ -3,7 +3,6 @@ class RestaurantsController < ApplicationController
   before_action :set_user
   before_action :set_restaurant, only: %i[ show edit update destroy ]
   before_action :admin_only
-  before_action :correct_user, only: %i[ show edit update destroy ]
 
   #This will load all the restautants of a particular admin
   def index
@@ -14,8 +13,6 @@ class RestaurantsController < ApplicationController
   def show
     @foods = Food.where("restaurant_id = ?", @restaurant.id)
   end
-
-  #This will search name of particular restaurant created by that user
 
   # Result of search
   def results
@@ -73,9 +70,11 @@ class RestaurantsController < ApplicationController
 
   private
 
-    def set_restaurant
-      @restaurant = Restaurant.find(params[:id])
-    end
+  def set_restaurant
+    @restaurant = Restaurant.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    redirect_to restaurants_url, notice: "Restaurant not found."
+  end
 
     def set_user
       @user = @current_user
@@ -91,10 +90,4 @@ class RestaurantsController < ApplicationController
       results
     end
 
-    def correct_user
-      unless @restaurant.user_id == @current_user.id
-        flash[:alert] = 'Not authorized to access this restaurant.'
-        redirect_to restaurants_path
-      end
-    end
 end

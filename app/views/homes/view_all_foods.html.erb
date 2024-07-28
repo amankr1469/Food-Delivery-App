@@ -4,7 +4,7 @@
   <%= form_with url: users_checkout_path, method: :post, class: 'space-y-6' do %>
     <h2 class="text-2xl font-semibold text-gray-800 mb-4">Cart</h2>
     <% total_cost = 0 %>
-    <% @cart.each do |food_id, item| %>
+    <% @food_results.each do |food_id, item| %>
       <div class="bg-white border border-gray-200 rounded-lg shadow-md p-6 flex items-center gap-4">
         <div class="w-24 h-24 flex-shrink-0">
           <% if item["photo"] && item["photo"]["record"] && item["photo"]["record"]["image"] %>
