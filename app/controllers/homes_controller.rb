@@ -1,9 +1,8 @@
 class HomesController < ApplicationController
   before_action :authenticate_request, except: [:index, :search, :search_results, :view_all_restaurants, :view_all_foods, :restaurant]
-  before_action :set_home_restaurants, :set_home_food
+  before_action :set_home_restaurants, :set_home_food, only:[:index]
   before_action :initialize_cart, only: [:add_to_cart, :remove_from_cart, :cart]
 
-  #Root URL
   def index
     @current_user
   end 
@@ -52,7 +51,8 @@ class HomesController < ApplicationController
       save_cart
       redirect_back(fallback_location: root_path, notice: "Item removed from cart.")
     else 
-    redirect_to users_login_path, notice: "You need to log in to remove items from the cart."
+    
+    redirect_to users_login_path, flash[notice]= "You need to log in to remove items from the cart."
     end
   end
 
@@ -60,7 +60,7 @@ class HomesController < ApplicationController
     if @current_user
       load_cart
     else
-      redirect_to users_login_path, notice: "You need to log in to view the cart."
+      redirect_to users_login_path
     end
   end
 
@@ -74,23 +74,22 @@ class HomesController < ApplicationController
 
       address = params[:address]
       if address.blank?
-        redirect_to users_cart_path, notice: "Address cannot be blank."
-        return
-      end
-
-      total_amount = calculate_total_amount
-      order = Order.new(
-        user_id: @current_user.id,
-        food_quantities: @cart,
-        address: address,
-        total_amount: total_amount
-      )
-
-      if order.save
-        clear_cart
-        redirect_to root_path, notice: "Order placed successfully."
+        redirect_to users_cart_path, notice: "Address cannot be blank." 
       else
-        redirect_to users_cart_path, notice: "Failed to place order."
+        total_amount = calculate_total_amount
+        order = Order.new(
+          user_id: @current_user.id,
+          food_quantities: @cart,
+          address: address,
+          total_amount: total_amount
+        )
+  
+        if order.save
+          clear_cart
+          redirect_to root_path, notice: "Order placed successfully."
+        else
+          redirect_to users_cart_path, notice: "Failed to place order."
+        end
       end
     else
       redirect_to users_login_path, notice: "You need to log in to place an order."
@@ -124,9 +123,6 @@ class HomesController < ApplicationController
     if params[:id].blank?
       redirect_back(fallback_location: root_path, notice: 'Invalid restaurant ID.')
       return
-    end
-
-    if params[:id]
     end
 
     @restaurant = Restaurant.find_by(id: params[:id])

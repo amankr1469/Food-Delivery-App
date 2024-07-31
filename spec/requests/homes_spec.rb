@@ -1,9 +1,9 @@
 require 'rails_helper'
 require 'auth_helpers'
 
-RSpec.describe "HomesController", type: :request do
+RSpec.describe HomesController, type: :request do
   let(:user) { FactoryBot.create(:user, password: 'password') }
-  let(:food) { FactoryBot.create(:food) }
+  let(:food) { FactoryBot.build(:food) }
 
   before do
     allow(controller).to receive(:authenticate_request).and_return(true)
@@ -17,6 +17,7 @@ RSpec.describe "HomesController", type: :request do
   end
 
   describe "POST /add_to_cart" do
+
     it "adds an item to the cart for authenticated users" do
       sign_in(user) 
       post users_add_path, params: { food_id: 1 }
@@ -63,21 +64,6 @@ RSpec.describe "HomesController", type: :request do
   end
 
   describe "POST /checkout" do
-    it "places an order for authenticated users with valid data" do
-      sign_in(user)
-      post users_checkout_path, params: { address: '123 Test St' }
-      expect(response).to redirect_to(root_path)
-      follow_redirect!
-      expect(response.body).to include("Order placed successfully.")
-    end
-
-    it "redirects to login for unauthenticated users" do
-      post users_checkout_path, params: { address: '123 Test St' }, headers: { "HTTP_REFERER" => users_cart_path }
-      expect(response).to redirect_to(users_login_path)
-      follow_redirect!
-      expect(response.body).to include("You need to log in to place an order.")
-    end
-
     it "redirects to the cart page if the cart is empty" do
       sign_in(user)
       post users_checkout_path, params: { address: '123 Test St' }
@@ -86,9 +72,40 @@ RSpec.describe "HomesController", type: :request do
       expect(response.body).to include("Your cart is empty.")
     end
 
+    before do
+      @redis = Redis.new
+      @cart_key = user.id.to_s
+      cart_data = { food.id.to_s => { "quantity" => 2 } }.to_json
+      @redis.set(@cart_key, cart_data)
+    end
+
+    it "places an order for authenticated users with valid data" do
+      sign_in(user)
+      cart_data = @redis.get(@cart_key)
+      expect(cart_data).to be_present
+      expect(JSON.parse(cart_data)).to have_key(food.id.to_s)
+
+      post users_checkout_path, params: { address: '123 Test St' }
+      
+      expect(response).to redirect_to(root_path)
+      follow_redirect!
+      expect(response.body).to include("Order placed successfully.")
+    end
+
+    it "redirects to login for unauthenticated users" do
+      post users_checkout_path, params: { address: '123 Test St' }
+      expect(response).to redirect_to(users_login_path)
+      follow_redirect!
+      expect(response.body).to include("Please log in to continue.")
+    end
+
     it "redirects to the cart page if address is blank" do
       sign_in(user)
+      cart_data = @redis.get(@cart_key)
+      expect(cart_data).to be_present
+      
       post users_checkout_path, params: { address: '' }, headers: { "HTTP_REFERER" => users_cart_path }
+
       expect(response).to redirect_to(users_cart_path)
       follow_redirect!
       expect(response.body).to include("Address cannot be blank.")
@@ -109,7 +126,7 @@ RSpec.describe "HomesController", type: :request do
     end
 
     it "redirects back with alert for empty search query" do
-            get users_search_path, params: { q: '' }, headers: { "HTTP_REFERER" => root_path }
+      get users_search_path, params: { q: '' }, headers: { "HTTP_REFERER" => root_path }
       expect(response).to redirect_to(root_path)
       follow_redirect!
       expect(response.body).to include('Search query cannot be blank.')

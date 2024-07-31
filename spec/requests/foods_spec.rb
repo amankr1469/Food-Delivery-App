@@ -1,13 +1,19 @@
 require 'rails_helper'
 
 RSpec.describe FoodsController, type: :controller do
+  render_views
   let(:restaurant) { FactoryBot.create(:restaurant) }
   let(:food) { FactoryBot.create(:food, restaurant: restaurant) }
 
+  before do
+    allow(controller).to receive(:authenticate_request).and_return(true)
+  end
+  
   describe 'GET #show' do
     it 'returns a success response' do
       get :show, params: { id: food.id }
       expect(response).to be_successful
+      expect(response.body).to include(food.id.to_s)
     end
   end
 
@@ -22,6 +28,7 @@ RSpec.describe FoodsController, type: :controller do
     it 'returns a success response' do
       get :edit, params: { id: food.id }
       expect(response).to be_successful
+      expect(response.body).to include(food.id.to_s)
     end
   end
 

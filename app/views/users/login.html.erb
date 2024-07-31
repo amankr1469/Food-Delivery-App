@@ -1,5 +1,7 @@
 <p id="notice"><%= notice %></p>
-
+<% flash.each do |key, message| %>
+  <div class="flash <%= key %>"><%= message %></div>
+<% end %>
 <div class="max-w-md mx-auto mt-10 bg-white shadow-lg rounded-lg overflow-hidden">
   <div class="bg-gray-800 p-4">
     <h4 class="text-white text-xl font-semibold">Log in</h4>

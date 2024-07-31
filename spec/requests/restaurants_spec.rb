@@ -1,10 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe RestaurantsController, type: :controller do
+  render_views
   let(:user) { FactoryBot.create(:user, role: 'admin') }
   let(:admin) { FactoryBot.create(:user, role: 'admin') }
   let(:restaurant) { FactoryBot.create(:restaurant, user: admin) }
-
+  
   before do
     allow(controller).to receive(:authenticate_request).and_return(true)
     allow(controller).to receive(:set_user).and_return(true)
@@ -23,6 +24,7 @@ RSpec.describe RestaurantsController, type: :controller do
     it 'returns a success response' do
       get :show, params: { id: restaurant.id }
       expect(response).to be_successful
+      expect(response.body).to include(restaurant.id.to_s)
     end
 
     it 'redirects to index with a notice if restaurant does not exist' do
@@ -43,6 +45,7 @@ RSpec.describe RestaurantsController, type: :controller do
     it 'returns a success response' do
       get :edit, params: { id: restaurant.id }
       expect(response).to be_successful
+      expect(response.body).to include(restaurant.id.to_s)
     end
   end
 

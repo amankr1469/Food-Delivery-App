@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   include JsonWebToken
 
   def authenticate_request
-    token = cookies[:token]
+    token = cookies[:token] 
     if token
       decoded_token = JsonWebToken.decode(token)
       @current_user = User.find_by(id: decoded_token['user_id'])

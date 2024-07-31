@@ -6,7 +6,7 @@ class RestaurantsController < ApplicationController
 
   #This will load all the restautants of a particular admin
   def index
-    @restaurants = Restaurant.where("user_id = ?", @user.id)
+    @restaurants = Restaurant.where("user_id = ?", @user.id) 
   end
 
   #This will show food items in that particular restaurants
@@ -86,7 +86,7 @@ class RestaurantsController < ApplicationController
 
     def perform_search
       results = []
-      results += Restaurant.where("user_id = ? AND name LIKE ?", @current_user.id, "%#{@query}%")
+      results += Restaurant.where("user_id = ? AND name ILIKE ?", @current_user.id, "%#{@query}%")
       results
     end
 
