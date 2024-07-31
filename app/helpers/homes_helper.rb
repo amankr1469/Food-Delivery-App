@@ -14,11 +14,13 @@ module HomesHelper
     if @query.blank?
       error!({ message: 'Search query cannot be blank' }, 422)
     else
-      restaurant_results = Restaurant.select(:name, :email, :description, :id).where("name ILIKE ?", "%#{@query}%")
-      if restaurant_results.blank? 
+      results = {}
+      results[:restaurants] = Restaurant.where("name ILIKE ?", "%#{@query}%").limit(5)
+      results[:foods] = Food.where("name ILIKE ?", "%#{@query}%").limit(5)
+      if results.blank? 
         error!({ message: 'No results found' }, 404)
       else
-        { message: 'Search results', results: restaurant_results }
+        { message: 'Search results', results: results }
       end
     end
   end
@@ -35,6 +37,84 @@ module HomesHelper
       else
         { message: 'Search results', results: restaurant_results }
       end
+    end
+  end
+
+  def search_all_foods
+    @query = params[:q]
+      
+    if @query.blank?
+      error!({ message: 'Search query cannot be blank' }, 422)
+    else
+      food_results = Food.where("name ILIKE ?", "%#{@query}%")
+      if food_results.blank? 
+        error!({ message: 'No results found' }, 404)
+      else
+        { message: 'Search results', results: food_results }
+      end
+    end
+  end
+
+  def add_to_cart
+      food_id = params[:food_id]
+      if food_id.blank?
+        error!({message: 'ID invalid'}, 401)
+      end
+
+      if @cart[food_id] 
+        @cart[food_id]["quantity"] = (@cart[food_id]["quantity"] || 0) + 1
+      else
+     
+      cart_item = { quantity: 1 }
+
+      @cart[food_id] = cart_item
+    end
+      save_cart
+      {message: 'Item added to cart'}
+  end
+
+  def remove_from_cart
+      food_id = params[:food_id]
+
+      if food_id.blank?
+        error!({message: 'ID invalid'}, 401)
+      end
+
+      if @cart[food_id] && @cart[food_id]["quantity"] > 1
+         @cart[food_id]["quantity"] = @cart[food_id]["quantity"] - 1
+
+      else
+        @cart.delete(food_id) 
+      end
+
+      save_cart
+      {message: "Item removed from cart."}
+  end
+
+  def checkout_cart
+    if @cart.empty?
+      error!({ message: 'Cart is empty' }, 422)
+    end
+  
+    address = params[:address]
+    if address.blank?
+      error!({ message: "Address can't be blank" }, 422)
+    end
+  
+    total_amount = calculate_total_amount
+    order = Order.new(
+      user_id: @current_user.id,
+      food_quantities: @cart,
+      address: address,
+      total_amount: total_amount
+    )
+  
+    begin
+      order.save!
+      clear_cart
+      { message: 'Order placed successfully' }
+    rescue ActiveRecord::RecordInvalid => e
+      error!({ message: "Failed to place order: #{e.message}" }, 422)
     end
   end
 

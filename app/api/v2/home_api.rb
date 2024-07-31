@@ -38,18 +38,7 @@ module V2
         requires :q, type: String, desc: 'Search query'
       end
       get "/search/foods" do
-        @query = params[:q]
-      
-        if @query.blank?
-          error!({ message: 'Search query cannot be blank' }, 422)
-        else
-          food_results = Food.where("name ILIKE ?", "%#{@query}%")
-          if food_results.blank? 
-            error!({ message: 'No results found' }, 404)
-          else
-            { message: 'Search results', results: food_results }
-          end
-        end
+        search_all_foods
       end
 
       before { authenticate }
@@ -61,21 +50,7 @@ module V2
       end
       post "cart/add" do
         if @current_user
-          food_id = params[:food_id]
-          if food_id.blank?
-            error!({message: 'ID invalid'}, 401)
-          end
-    
-          if @cart[food_id] 
-            @cart[food_id]["quantity"] = (@cart[food_id]["quantity"] || 0) + 1
-          else
-         
-          cart_item = { quantity: 1 }
-    
-          @cart[food_id] = cart_item
-        end
-          save_cart
-          {message: 'Item added to cart'}
+          add_to_cart
         else 
           error!({message: 'You need to login to access this feature'}, 401)
         end
@@ -87,21 +62,7 @@ module V2
       end
       post "cart/remove" do
         if @current_user
-          food_id = params[:food_id]
-    
-          if food_id.blank?
-            error!({message: 'ID invalid'}, 401)
-          end
-    
-          if @cart[food_id] && @cart[food_id]["quantity"] > 1
-             @cart[food_id]["quantity"] = @cart[food_id]["quantity"] - 1
-    
-          else
-            @cart.delete(food_id) 
-          end
-    
-          save_cart
-          {message: "Item removed from cart."}
+          remove_from_cart
         else 
           error!({message: 'You need to login to access this feature'}, 401)
         end
@@ -122,31 +83,8 @@ module V2
         requires :address, type: String, desc: 'Delivery address'
       end
       post '/cart/checkout' do
-      
-        if @cart.empty?
-          error!({ message: 'Cart is empty' }, 422)
-        end
-      
-        address = params[:address]
-        if address.blank?
-          error!({ message: "Address can't be blank" }, 422)
-        end
-      
-        total_amount = calculate_total_amount
-        order = Order.new(
-          user_id: @current_user.id,
-          food_quantities: @cart,
-          address: address,
-          total_amount: total_amount
-        )
-      
-        begin
-          order.save!
-          clear_cart
-          { message: 'Order placed successfully' }
-        rescue ActiveRecord::RecordInvalid => e
-          error!({ message: "Failed to place order: #{e.message}" }, 422)
-        end
+        load_cart
+        checkout_cart
       end
     end
   end

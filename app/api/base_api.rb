@@ -8,5 +8,6 @@ module MyGrapeAPI
 
     mount V2::AuthAPI
     mount V2::HomeAPI
+    mount V2::RestaurantAPI
   end
 end

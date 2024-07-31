@@ -17,6 +17,6 @@ module AuthHelper
   end
   
   def admin_only
-    error!({ message: 'Access denied' }, 403) unless current_user&.role == 'admin'
+    error!({ message: 'Access denied' }, 403) unless @current_user&.role == 'admin'
   end
 end
