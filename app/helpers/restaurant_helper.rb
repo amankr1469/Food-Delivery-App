@@ -17,7 +17,7 @@ module RestaurantHelper
       { message: 'Restaurant details', restaurant: restaurant }
     rescue ActiveRecord::RecordNotFound
       error!({ message: 'Restaurant not found for the given ID' }, 404)
-    rescue StandardError => e
+    rescue => e
       error!({ message: 'Failed to retrieve restaurant', error: e.message }, 500)
     end
   end
@@ -30,7 +30,7 @@ module RestaurantHelper
     else
       { message: 'No food found for the current ID', foods: [] }
     end
-    rescue StandardError => e
+    rescue => e
       error!({ message: 'Failed to retrieve food', error: e.message }, 500)
   end
 
@@ -98,7 +98,7 @@ module RestaurantHelper
       { message: 'Restaurant successfully deleted' }
     rescue ActiveRecord::RecordNotFound
       error!({ message: 'Restaurant not found' }, 404)
-    rescue StandardError => e
+    rescue => e
       error!({ message: 'Failed to delete restaurant', error: e.message }, 500)
     end
   end

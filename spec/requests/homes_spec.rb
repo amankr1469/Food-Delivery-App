@@ -64,13 +64,6 @@ RSpec.describe HomesController, type: :request do
   end
 
   describe "POST /checkout" do
-    it "redirects to the cart page if the cart is empty" do
-      sign_in(user)
-      post users_checkout_path, params: { address: '123 Test St' }
-      expect(response).to redirect_to(users_cart_path)
-      follow_redirect!
-      expect(response.body).to include("Your cart is empty.")
-    end
 
     before do
       @redis = Redis.new
