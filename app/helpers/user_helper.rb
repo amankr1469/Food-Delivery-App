@@ -8,7 +8,7 @@ module UserHelper
   end
 
   def logout_user
-    cookies.delete(:token) if cookies[:token]
+    cookies.delete(:token, path:'/') if cookies[:token]
     { message: 'Logged out successfully' }
   end
 
@@ -49,18 +49,12 @@ module UserHelper
     if current_user.blank?
       error!({ message: 'User not found' }, 404)
     end
-
-    if current_user.id != params[:id].to_i
-      error!({ message: 'Unauthorized action' }, 403)
-    end
   
     begin
-      current_user.delete!
+      current_user.delete
       { message: 'User was successfully destroyed' }
-    rescue ActiveRecord::RecordNotDestroyed => e
-      error!({ message: 'Failed to destroy user. Please try again later.' }, 422)
     rescue => e
-      error!({ message: 'An unexpected error occurred. Please try again later.' }, 500)
+      error!({ message: e.message }, 500)
     end
   end
 end

@@ -9,7 +9,7 @@ module V2
 
     resources '/user' do
       desc 'Show user profile'
-      get :profile do
+      get '/profile' do
         user_details(@current_user)
       end
 

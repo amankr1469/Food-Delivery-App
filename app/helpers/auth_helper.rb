@@ -4,10 +4,6 @@ module AuthHelper
   include JsonWebToken
   
   def login_user
-    if params[:email].blank? || params[:password].blank?
-      error!({ message: 'Email and password must be provided' }, 400)
-    end
-
     user = User.find_by(email: params[:email])
 
     if user && user.authenticate(params[:password])
@@ -76,14 +72,15 @@ module AuthHelper
     token = cookies[:token]
     
     if token
-      token = cookies[:token] 
-      if token
+      begin
         decoded_token = JsonWebToken.decode(token)
         @current_user = User.find_by(id: decoded_token['user_id'])
-        @current_user
-      else 
-        redirect_to users_login_path, alert: 'Please log in to continue.'
+        error!({ message: 'Unauthorized' }, 401) unless @current_user
+      rescue JWT::DecodeError, ActiveRecord::RecordNotFound
+        error!({ message: 'Invalid token' }, 401)
       end
+    else
+      error!({ message: 'Unauthorized' }, 401)
     end
   end
   

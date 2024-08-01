@@ -11,6 +11,6 @@ module MyGrapeAPI
     mount V2::RestaurantAPI
     mount V2::FoodAPI
     mount V2::UserAPI
-    
+    mount V2::CartAPI
   end
 end

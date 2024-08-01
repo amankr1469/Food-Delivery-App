@@ -6,7 +6,7 @@
 
 # Ignore bundler config.
 /.bundle
-
+/app/controllers/concerns/json_web_token.rb
 # Ignore all logfiles and tempfiles.
 /log/*
 /tmp/*
