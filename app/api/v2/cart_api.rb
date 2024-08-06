@@ -37,7 +37,6 @@ module V2
       get '/' do
         if @current_user
           load_cart
-          {message: 'Cart Items', food_items: @food_items, quantities: @cart}
         else
           error!({message: 'You need to login to access this feature'}, 401)
         end

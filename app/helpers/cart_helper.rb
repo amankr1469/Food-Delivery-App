@@ -56,6 +56,7 @@ def checkout_cart
   begin
     order.save!
     clear_cart
+    CheckoutMailerJob.perform_async(@current_user.id)
     { message: 'Order placed successfully' }
   rescue ActiveRecord::RecordInvalid => e
     error!({ message: "Failed to place order: #{e.message}" }, 422)
@@ -81,9 +82,27 @@ def clear_cart
 end
 
 def load_cart
-  initialize_cart
-  food_ids = @cart.keys
+  food_ids = @cart.keys.map(&:to_i)
   @food_items = Food.where(id: food_ids)
+
+  found_food_ids = @food_items.pluck(:id)
+  missing_food_ids = food_ids - found_food_ids
+
+  result = {
+    message: 'Cart Items',
+    food_items: FoodEntity::Details.represent(@food_items) ,
+    quantities: @cart,
+    total_cost: calculate_total_amount
+  }
+  
+  if missing_food_ids.any?
+    missing_messages = missing_food_ids.map do |missing_id|
+      "Food item with ID #{missing_id} is no longer available. Restaurant is no longer serving this dish."
+    end
+    result[:missing_items] = missing_messages
+  end
+
+  result
 end
 
 def calculate_total_amount

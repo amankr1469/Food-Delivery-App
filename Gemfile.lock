@@ -122,6 +122,9 @@ GEM
       mustermann-grape (~> 1.1.0)
       rack (>= 2)
       zeitwerk
+    grape-entity (1.0.1)
+      activesupport (>= 3.0.0)
+      multi_json (>= 1.3.2)
     i18n (1.14.5)
       concurrent-ruby (~> 1.0)
     jbuilder (2.12.0)
@@ -132,6 +135,7 @@ GEM
     listen (3.9.0)
       rb-fsevent (~> 0.10, >= 0.10.3)
       rb-inotify (~> 0.9, >= 0.9.10)
+    logger (1.6.0)
     loofah (2.22.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.12.0)
@@ -146,6 +150,7 @@ GEM
     mini_mime (1.1.5)
     minitest (5.24.1)
     msgpack (1.7.2)
+    multi_json (1.15.0)
     mustermann (3.0.0)
       ruby2_keywords (~> 0.0.1)
     mustermann-grape (1.1.0)
@@ -277,6 +282,12 @@ GEM
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
     semantic_range (3.0.0)
+    sidekiq (7.3.0)
+      concurrent-ruby (< 2)
+      connection_pool (>= 2.3.0)
+      logger
+      rack (>= 2.2.4)
+      redis-client (>= 0.22.2)
     spring (4.2.1)
     sprockets (4.2.1)
       concurrent-ruby (~> 1.0)
@@ -350,6 +361,7 @@ DEPENDENCIES
   capybara (>= 3.26)
   factory_bot_rails
   grape (~> 2.1)
+  grape-entity
   jbuilder (~> 2.7)
   jwt
   listen (~> 3.3)
@@ -363,6 +375,7 @@ DEPENDENCIES
   rspec-rails (~> 5.0)
   sass-rails (>= 6)
   selenium-webdriver (>= 4.0.0.rc1)
+  sidekiq
   spring
   stimulus-rails (~> 1.3)
   tailwindcss-rails (~> 2.5)

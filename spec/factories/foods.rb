@@ -1,5 +1,6 @@
 FactoryBot.define do
   factory :food do
+    id { SecureRandom.uuid }
     name { "Pizza" }
     description { "A delicious pizza" }
     price { 10 }

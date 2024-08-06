@@ -1,20 +1,35 @@
 module RestaurantHelper
+  include RedisHelper
 
   def get_admin_restaurants
-    restaurants = Restaurant.where(user_id: @current_user.id)
+    page = params[:page].present? ? params[:page].to_i : 1
+    page_size = limit
+    offset = (page - 1) * page_size
+
+    cache_key = "admin_#{@current_user.id}_page_#{page}_size_#{page_size}"
+     
+    restaurants = get_cached_data(cache_key) do
+      Restaurant.where(user_id: @current_user.id).limit(page_size).offset(offset)
+    end
+
     if restaurants.any?
-      { message: 'All the restaurants of logged in admin', restaurants: restaurants }
+      {
+        message: 'All the restaurants of logged in admin',
+        restaurants: RestaurantEntity::Details.represent(restaurants),
+        current_page: page,
+        page_size: page_size,
+      }
     else
       { message: 'No restaurants found for the current admin', restaurants: [] }
-    end 
-      rescue => e
-      error!({ message: 'Failed to retrieve restaurants', error: e.message }, 500) 
-  end
+    end
+    rescue => e
+      error!({ message: 'Failed to retrieve restaurants', error: e.message }, 500)
+    end
 
   def get_restaurant_details
     begin
       restaurant = Restaurant.find(params[:id])
-      { message: 'Restaurant details', restaurant: restaurant }
+      { message: 'Restaurant details', restaurant: RestaurantEntity::Details.represent(restaurant) }
     rescue ActiveRecord::RecordNotFound
       error!({ message: 'Restaurant not found for the given ID' }, 404)
     rescue => e
@@ -24,7 +39,7 @@ module RestaurantHelper
   
 
   def get_restaurant_foods
-    foods = Food.where("restaurant_id = ?", params[:id])
+    foods = Food.where("restaurant_id = ?", params[:id]).limit(limit).offset(params[:offset])
     if foods.any?
       { message: 'All the foods of this restaurnat', foods: foods }
     else
@@ -44,7 +59,6 @@ module RestaurantHelper
         description: params[:description],
         opening_hours: params[:opening_hours],
         delivery_radius: params[:delivery_radius],
-        image: params[:image],
       }
 
       restaurant = Restaurant.new(restaurant_params)
@@ -101,6 +115,12 @@ module RestaurantHelper
     rescue => e
       error!({ message: 'Failed to delete restaurant', error: e.message }, 500)
     end
+  end
+
+  private
+  def limit 
+    limit_value = params[:page_size].present? ? params[:page_size].to_i : 100
+    [limit_value, 100].min
   end
   
 end

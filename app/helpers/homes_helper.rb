@@ -1,11 +1,38 @@
 module HomesHelper
+  include RedisHelper
 
   def load_home_restaurants
-    @restaurants = Restaurant.select(:name, :description, :id).limit(limit).offset(params[:offset])
+    page = params[:page].present? ? params[:page].to_i : 1
+    page_size = limit
+    offset = (page - 1) * page_size
+
+    cache_key = "index_restaurant_#{page}_size_#{page_size}"
+
+    begin
+    @restaurants = get_cached_data(cache_key) do
+      Restaurant.limit(page_size).offset(offset)
+    end 
+    rescue ActiveRecord::ActiveRecordError => e
+      Rails.logger.error("Error while loading restaurants: #{e.message}")
+      @restaurants = []
+    end
   end
 
   def load_home_foods
-    @foods = Food.select(:name, :price, :id).limit(limit).offset(params[:offset])
+    page = params[:page].present? ? params[:page].to_i : 1
+    page_size = limit
+    offset = (page - 1) * page_size
+
+    cache_key = "index_food_#{page}_size_#{page_size}"
+
+    begin
+    @foods = get_cached_data(cache_key) do
+      Food.limit(page_size).offset(offset)
+    end
+    rescue ActiveRecord::ActiveRecordError => e
+      Rails.logger.error("Error while loading foods: #{e.message}")
+      @foods = []
+    end 
   end
 
   def perform_search
@@ -54,8 +81,11 @@ module HomesHelper
   private
 
   def limit 
-    limit_value = params[:limit].present? ? params[:limit].to_i : 100
+    limit_value = params[:page_size].present? ? params[:page_size].to_i : 100
     [limit_value, 100].min
   end
-  
+
+  def load_redis_data()
+    
+  end
 end

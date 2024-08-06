@@ -11,8 +11,8 @@ module V2
         load_home_foods
         {
           message: 'Home Page with Restaurants and Foods',
-          restaurant: @restaurants, 
-          food: @foods
+          restaurant: RestaurantEntity::Index.represent(@restaurants),
+          food: FoodEntity::Index.represent(@foods)
         }
       end 
 

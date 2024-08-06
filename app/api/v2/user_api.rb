@@ -22,8 +22,8 @@ module V2
       #TODO - Role shouldn't change
       desc 'Update user profile'
       params do
-        requires :name, type: String, desc: 'Name'
-        requires :email, type: String, desc: 'Email' 
+        optional :name, type: String, desc: 'Name'
+        optional :email, type: String, desc: 'Email' 
         optional :contact_number, type: String, desc: 'Contact Number'
       end
       patch '/update' do

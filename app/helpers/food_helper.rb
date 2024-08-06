@@ -2,7 +2,7 @@ module FoodHelper
   def get_food_details
     begin
       food = Food.find(params[:id])
-      { message: 'Food item details', food: food }
+      { message: 'Food item details', food: FoodEntity::Details.represent(food) }
     rescue ActiveRecord::RecordNotFound
       error!({ message: 'Food item not found' }, 404)
     rescue => e

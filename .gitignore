@@ -6,7 +6,7 @@
 
 # Ignore bundler config.
 /.bundle
-/app/controllers/concerns/json_web_token.rb
+
 # Ignore all logfiles and tempfiles.
 /log/*
 /tmp/*
@@ -35,5 +35,6 @@
 yarn-debug.log*
 .yarn-integrity
 /config
+/app/controllers/concerns
 /app/assets/builds/*
 !/app/assets/builds/.keep

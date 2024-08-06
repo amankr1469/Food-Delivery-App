@@ -3,6 +3,10 @@ module V2
     version 'v2', using: :path
     format :json
     helpers FoodHelper
+    helpers AuthHelper
+
+    before { authenticate }
+    before { admin_only }
 
      resources "/admin" do
        desc "Show food item details"

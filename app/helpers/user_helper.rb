@@ -3,8 +3,8 @@ module UserHelper
       unless current_user
         error!({ message: 'Please sign in to access this page' }, 401)
       end
-      user_data = current_user.attributes.except('password_digest')
-      {message: 'User Details', user: user_data}
+      user_data = current_user
+      {message: 'User Details', user: UserEntity::Details.represent(user_data) }
   end
 
   def logout_user
@@ -13,26 +13,22 @@ module UserHelper
   end
 
   def update_user_details(current_user)
-    email = params[:email]
-    name = params[:name]
-    contact_number = params[:contact_number]
-
     if current_user.blank?
       error!({ message: 'You are not logged in' }, 401)
     end
 
-    unless email =~ /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
+    unless params[:email] =~ /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
       error!({ message: 'Invalid email format' }, 422)
     end
 
-    if name.blank?
+    if params[:name].blank?
       error!({ message: 'Name cannot be blank' }, 422)
     end
 
     user_params = {}
-    user_params[:email] = email
-    user_params[:name] = name if name.present?
-    user_params[:contact_number] = contact_number if contact_number.present?
+    user_params[:email] = params[:email] if params[:email].present?
+    user_params[:name] = params[:name] if params[:name].present?
+    user_params[:contact_number] = params[:contact_number] if params[:contact_number].present?
 
     begin
       if current_user.update!(user_params)
