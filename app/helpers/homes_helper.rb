@@ -49,12 +49,19 @@ module HomesHelper
   end
 
   def search_all_restaurants
+    page = params[:page].present? ? params[:page].to_i : 1
+    page_size = limit
+    offset = (page - 1) * page_size
+
     @query = params[:q] 
       
     if @query.blank?
       error!({ message: 'Search query cannot be blank' }, 422)
     else
       restaurant_results = Restaurant.select(:name, :email, :description, :id).where("name ILIKE ?", "%#{@query}%")
+                                     .limit(page_size)
+                                     .offset(offset)
+
       if restaurant_results.blank? 
         error!({ message: 'No results found' }, 404)
       else
@@ -64,12 +71,18 @@ module HomesHelper
   end
 
   def search_all_foods
+    page = params[:page].present? ? params[:page].to_i : 1
+    page_size = limit
+    offset = (page - 1) * page_size
     @query = params[:q]
       
     if @query.blank?
       error!({ message: 'Search query cannot be blank' }, 422)
     else
       food_results = Food.where("name ILIKE ?", "%#{@query}%")
+                         .limit(page_size)
+                         .offset(offset)
+
       if food_results.blank? 
         error!({ message: 'No results found' }, 404)
       else
@@ -83,9 +96,5 @@ module HomesHelper
   def limit 
     limit_value = params[:page_size].present? ? params[:page_size].to_i : 100
     [limit_value, 100].min
-  end
-
-  def load_redis_data()
-    
   end
 end
