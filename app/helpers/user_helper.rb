@@ -13,16 +13,12 @@ module UserHelper
   end
 
   def update_user_details(current_user)
-    if current_user.blank?
-      error!({ message: 'You are not logged in' }, 401)
-    end
-
-    unless params[:email] =~ /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
-      error!({ message: 'Invalid email format' }, 422)
-    end
-
-    if params[:name].blank?
+    if params[:name].present? && params[:name].blank?
       error!({ message: 'Name cannot be blank' }, 422)
+    end
+
+    if params[:email].present? && params[:email].blank?
+      error!({ message: 'Email cannot be blank' }, 422)
     end
 
     user_params = {}
@@ -30,7 +26,7 @@ module UserHelper
     user_params[:name] = params[:name] if params[:name].present?
     user_params[:contact_number] = params[:contact_number] if params[:contact_number].present?
 
-    begin
+    
       if current_user.update!(user_params)
     { message: 'User details updated' }
     end
@@ -38,7 +34,6 @@ module UserHelper
       error!({ message: e.record.errors.full_messages.join(', ') }, 422)
     rescue => e
       error!({ message: 'Failed to update user details' }, 500)
-    end
   end
 
   def delete_user(current_user)

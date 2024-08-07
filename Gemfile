@@ -68,3 +68,4 @@ gem "tailwindcss-rails", "~> 2.5"
 gem "grape", "~> 2.1"
 gem 'grape-entity'
 gem 'sidekiq' 
+gem 'csv'

@@ -5,7 +5,7 @@ module V2
     helpers AuthHelper
     helpers RestaurantHelper
     
-    before { authenticate }
+    before { authenticate } 
     before { admin_only }
 
     resources '/admin' do
@@ -68,7 +68,6 @@ module V2
       delete 'restaurant/delete' do
         delete_restaurant
       end
-
     end
   end
 end

@@ -12,7 +12,7 @@ module RestaurantHelper
       Restaurant.where(user_id: @current_user.id).limit(page_size).offset(offset)
     end
 
-    if restaurants.any?
+    if restaurants.any? 
       {
         message: 'All the restaurants of logged in admin',
         restaurants: RestaurantEntity::Details.represent(restaurants),
