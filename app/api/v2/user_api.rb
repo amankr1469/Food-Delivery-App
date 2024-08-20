@@ -13,13 +13,11 @@ module V2
         user_details(@current_user)
       end
 
-      #TODO
       desc 'Logout user'
       delete '/logout' do
         logout_user
       end
 
-      #TODO - Role shouldn't change
       desc 'Update user profile'
       params do
         optional :name, type: String, desc: 'Name'

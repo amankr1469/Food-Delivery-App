@@ -4,9 +4,6 @@ module V2
     format :json
     helpers AuthHelper
     helpers RestaurantHelper
-    
-    before { authenticate } 
-    before { admin_only }
 
     resources '/admin' do
       desc 'Admin Dashboard Page'    

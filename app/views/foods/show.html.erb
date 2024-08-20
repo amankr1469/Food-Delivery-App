@@ -21,8 +21,8 @@
             <% if @food.image.present? %>
     <%= image_tag(@food.image, class: 'w-32 h-32 object-cover rounded-lg') %>
         <% else %>
-          <div class="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center mr-4">
-            <span class="text-gray-500">No image</span>
+          <div class="w-24 h-24 rounded-full flex items-center justify-center mr-4">
+            <%= image_tag 'default_food_img.jpg', class: "w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center mr-4"%>
           </div>
         <% end %>
 

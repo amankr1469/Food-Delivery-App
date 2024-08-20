@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <% if @user.name.present? %>
+    <h1>Food is in cart, <%= @user.name %></h1>
+    <% end %>
+    <p> Order it now or someone else will send you snap of it. </p>
+  </body>
+</html>

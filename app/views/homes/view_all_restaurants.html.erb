@@ -1,23 +1,32 @@
   <h1 class="text-4xl font-bold text-center text-blue-600 mb-8">Search Results</h1>
-
+  <%= link_to 'Home', root_path(), class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %>
   <div class="mb-8">
     <h2 class="text-2xl font-semibold text-gray-800 mb-4">Restaurants</h2>
     <% if @restaurant_results.any? %>
       <ul class="space-y-4">
         <% @restaurant_results.each do |restaurant| %>
           <li class="bg-white border border-gray-200 rounded-lg shadow-md p-4">
-            <h3 class="text-xl font-semibold text-gray-900 mb-2"><%= restaurant.name %></h3>
-            <% if restaurant.image.present? %>
-              <div class="mb-4">
-                <%= image_tag(restaurant.image, class: 'w-24 h-24 object-cover rounded', alt: "#{restaurant.name} Logo") %>
-              </div>
-            <% else %>
-              <p class="text-gray-500 mb-4">No logo available</p>
-            <% end %>
-            <%= link_to 'Check Food', users_restaurant_path(restaurant.id), class: "inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %> 
+            <h3 class="text-xl font-semibold text-gray-900 mb-2"><%= restaurant["name"] %></h3>
+      <div class="flex items-center mb-4">
+        <% if restaurant["image_url"].present? %>
+          <%= image_tag restaurant["image_url"], class: 'w-24 h-24 rounded-full mr-4 object-cover' %>
+        <% else %>
+          <div class="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center mr-4">
+            <%= image_tag 'default_restaurant_img.avif',  alt: "#{restaurant["name"]} Logo"%>
+          </div>
+        <% end %>
+      </div>
+            <%= link_to 'Check Food', users_restaurant_path(restaurant["id"]), class: "inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %> 
           </li>
         <% end %>
       </ul>
+
+      <div class="flex justify-between mt-5">
+  <% if @page > 1 %>
+    <%= link_to 'Previous', users_search_restaurant_path(page: @page - 1,  page_size: 10, q: params[:q]), class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %>
+  <% end %>
+    <%= link_to 'Next', users_search_restaurant_path(page: @page + 1, page_size: 10, q: params[:q]), class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %>
+</div>
     <% else %>
       <p class="text-gray-500">No restaurants found</p>
     <% end %>

@@ -2,8 +2,6 @@
 
 <h1 class="text-2xl font-bold mb-4">Restaurants</h1>
 
-<%= render 'homes/navbar', form_action: admin_restaurants_results_path %>
-
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
   <% @restaurants.each do |restaurant| %>
     <div class="bg-white rounded-lg shadow-md p-6">
@@ -12,7 +10,7 @@
           <%= image_tag restaurant["image_url"], class: 'w-24 h-24 rounded-full mr-4 object-cover' %>
         <% else %>
           <div class="w-24 h-24 rounded-full flex items-center justify-center mr-4">
-            <%= image_tag 'default_restaurant_img.avif', class: 'w-24 h-24 rounded-full mr-4 object-cover' %>
+                        <%= image_tag 'default_restaurant_img.avif', class: 'w-24 h-24 rounded-full mr-4 object-cover' %>
           </div>
         <% end %>
       </div>
@@ -35,15 +33,11 @@
 
 <div class="flex justify-between mt-5">
   <% if @page > 1 %>
-    <%= link_to 'Previous', restaurants_path(page: @page - 1, page_size: 10), class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %>
+    <%= link_to 'Previous', admin_restaurants_results_path(page: @page - 1, page_size: 10, q: params[:q]), class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %>
   <% end %>
-  <%= link_to 'Next', restaurants_path(page: @page + 1, page_size: 10), class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %>
+  <%= link_to 'Next', admin_restaurants_results_path(page: @page + 1, page_size: 10, q: params[:q]), class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %>
 </div>
 
 <br>
 
-<div class="flex gap-6">
-<%= link_to 'New Restaurant', new_restaurant_path, class: 'bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600' %>
-<%= link_to 'Generate Report', admin_restaurants_reports_path(), class: 'bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600' %>
-<%= link_to 'Download Report', admin_reports_download_path(), class: 'bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600' %>
-</div>
+<div><%= link_to 'Back', restaurants_url, class: 'bg-gray-300 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-400' %></div>

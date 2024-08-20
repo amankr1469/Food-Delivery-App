@@ -14,6 +14,7 @@ module CartHelper
     @cart[food_id] = cart_item
     end
     save_cart
+    FoodCartMailerJob.perform_in(1.minute, @current_user.id)
     {message: 'Item added to cart'}
   end
 

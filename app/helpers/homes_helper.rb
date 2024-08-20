@@ -2,15 +2,15 @@ module HomesHelper
   include RedisHelper
 
   def load_home_restaurants
-    page = params[:page].present? ? params[:page].to_i : 1
-    page_size = limit
-    offset = (page - 1) * page_size
+    r_page = params[:r_page].present? ? params[:r_page].to_i : 1
+    r_page_size = limit
+    offset = (r_page - 1) * r_page_size
 
-    cache_key = "index_restaurant_#{page}_size_#{page_size}"
+    cache_key = "index_restaurant_#{r_page}_size_#{r_page_size}"    
 
     begin
     @restaurants = get_cached_data(cache_key) do
-      Restaurant.limit(page_size).offset(offset)
+      Restaurant.limit(r_page_size).offset(offset)
     end 
     rescue ActiveRecord::ActiveRecordError => e
       Rails.logger.error("Error while loading restaurants: #{e.message}")
@@ -19,20 +19,45 @@ module HomesHelper
   end
 
   def load_home_foods
-    page = params[:page].present? ? params[:page].to_i : 1
-    page_size = limit
-    offset = (page - 1) * page_size
+    
+    f_page = params[:f_page].present? ? params[:f_page].to_i : 1
+    f_page_size = limit
+    offset = (f_page - 1) * f_page_size
+    
+    # TODO
+    if params[:filter].present?
+      categories = JSON.parse(params[:filter])
+      cache_key = "index_food_#{categories}"
+      
+      begin
+        @foods = get_cached_data(cache_key) do
+          Food.limit(f_page_size).offset(offset).where(category: categories)
+        end
+      rescue ActiveRecord::ActiveRecordError => e
+          Rails.logger.error("Error while loading foods: #{e.message}")
+          @foods = []
+      end 
 
-    cache_key = "index_food_#{page}_size_#{page_size}"
-
-    begin
-    @foods = get_cached_data(cache_key) do
-      Food.limit(page_size).offset(offset)
+    else
+      cache_key = "index_food_#{f_page}_size_#{f_page_size}"
+      begin
+        @foods = get_cached_data(cache_key) do
+          Food.limit(f_page_size).offset(offset)
+        end
+      rescue ActiveRecord::ActiveRecordError => e
+        Rails.logger.error("Error while loading foods: #{e.message}")
+        @foods = []
+      end 
     end
-    rescue ActiveRecord::ActiveRecordError => e
-      Rails.logger.error("Error while loading foods: #{e.message}")
-      @foods = []
-    end 
+
+    # begin
+    #   @foods = get_cached_data(cache_key) do
+    #     Food.limit(f_page_size).offset(offset)
+    #   end
+    # rescue ActiveRecord::ActiveRecordError => e
+    #   Rails.logger.error("Error while loading foods: #{e.message}")
+    #   @foods = []
+    # end 
   end
 
   def perform_search
@@ -58,7 +83,8 @@ module HomesHelper
     if @query.blank?
       error!({ message: 'Search query cannot be blank' }, 422)
     else
-      restaurant_results = Restaurant.select(:name, :email, :description, :id).where("name ILIKE ?", "%#{@query}%")
+      restaurant_results = Restaurant.select(:name, :email, :description, :id, :image_url)
+                                     .where("name ILIKE ?", "%#{@query}%")
                                      .limit(page_size)
                                      .offset(offset)
 

@@ -11,10 +11,14 @@ class UsersController < ApplicationController
     else
       @user = User.new(user_params)
   
-      if @user.save
-        redirect_to users_login_path
-      else
-        redirect_to users_register_path, notice: 'Choose strong credentials(Password: Minimun lenght 6)'
+      begin
+        @user.save!
+        RegisteredMailerJob.perform_in(1.hour, @user.id)
+        redirect_to users_login_path, notice: 'User registered successfully'
+      rescue ActiveRecord::RecordInvalid => e
+        redirect_to users_register_path, notice: e.message
+      rescue => e
+        redirect_to users_register_path, notice: "An unexpected error occurred: #{e.message}"
       end
     end
   end
@@ -28,35 +32,39 @@ class UsersController < ApplicationController
 
   def signin
     if params[:email].blank? || params[:password].blank?
-      redirect_to users_login_path, notice: "Email and password must be provided"
+      redirect_to users_login_path, alert: "Email and password must be provided"
       return
     end
-
+  
     @user = User.find_by(email: params[:email])
-
+  
     cookies.delete(:token) if cookies[:token]
-
+  
     if @user && @user.authenticate(params[:password])
-      token = JsonWebToken.encode(user_id: @user.id)
-      cookies[:token] = {
-        value: token,
-        expires: 7.hours.from_now,
-        httponly: true,
-      }
+      begin
+        token = JsonWebToken.encode(user_id: @user.id)
+        cookies[:token] = {
+          value: token,
+          expires: 7.hours.from_now,
+          httponly: true,
+        }
 
-      case @user.role
-      when 'admin'
-        redirect_to restaurants_path
-      when 'customer'
-        redirect_to root_path
-      else
-        redirect_to root_path
+        case @user.role
+        when 'admin'
+          redirect_to restaurants_path, notice: 'Signed in successfully as Admin'
+        when 'customer'
+          redirect_to root_path, notice: 'Signed in successfully'
+        else
+          redirect_to root_path, notice: 'Invalid user role'
+        end
+      rescue => e
+        redirect_to users_login_path, notice: "An unexpected error occurred: #{e.message}"
       end
-
     else
       redirect_to users_login_path, notice: "Invalid Credentials"
     end
   end
+  
   
   def signout
     cookies.delete(:token) if cookies[:token]
@@ -74,27 +82,42 @@ class UsersController < ApplicationController
       redirect_to users_signup_path, alert: 'User not found'
       return
     end
-
-    if @user.update(edit_user_params)
-      redirect_to root_path, notice: 'User details updated'
-    else
-      render :profile, notice: 'Failed to update user details'
+  
+    begin
+      @user.update!(edit_user_params)
+      if @user.image.attached?
+        @user.update!(avatar: url_for(@user.image))
+      end
+      redirect_to root_path, notice: 'User details updated successfully'
+    rescue ActiveRecord::RecordInvalid => e
+      flash[:notice] = "Failed to update user details: #{e.message}"
+      render :profile
+    rescue => e
+      flash[:notice] = "An unexpected error occurred: #{e.message}"
+      render :profile
     end
   end
+  
 
   def destroy
     if @user.nil?
-      redirect_to users_register_path, alert: 'User not found'
+      redirect_to users_login_path, notice: 'User not found'
       return
     end
-
-    @user.destroy
-    redirect_to users_register_path, notice: 'User was successfully destroyed'
+  
+    begin
+      @user.destroy!
+      redirect_to users_register_path, notice: 'User was successfully destroyed'
+    rescue ActiveRecord::RecordNotDestroyed => e
+      redirect_to users_login_path, notice: "Failed to destroy user: #{e.message}"
+    rescue => e
+      redirect_to users_login_path, notice: "An unexpected error occurred: #{e.message}"
+    end
   end
+  
 
 
   private 
-
   def set_user 
     @user = @current_user
   end
@@ -104,6 +127,6 @@ class UsersController < ApplicationController
   end
 
   def edit_user_params
-    params.require(:user).permit(:name, :email)
+    params.require(:user).permit(:name, :email, :contact_number, :image)
   end
 end

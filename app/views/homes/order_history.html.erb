@@ -1,0 +1,32 @@
+<h1 class="text-3xl font-bold mb-6">Order History (Last 7 Days)</h1>
+
+<% if @orders.any? %>
+  <div class="overflow-x-auto">
+    <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+      <thead class="bg-gray-800 text-white">
+        <tr>
+          <th class="py-2 px-4">Date</th>
+          <th class="py-2 px-4">Items</th>
+          <th class="py-2 px-4">Total Amount</th>
+          <th class="py-2 px-4">Address</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @orders.each do |order| %>
+          <tr class="border-b border-gray-200 hover:bg-gray-100">
+            <td class="py-2 px-4 text-center"><%= order.created_at.strftime("%d %b %Y %H:%M") %></td>
+            <td class="py-2 px-4">
+              <% order.food_quantities.each do |food_id, details| %>
+                <p class="mb-2">Food: <span class="font-semibold"><%= @food_items[food_id.to_i] %></span>, Quantity: <span class="font-semibold"><%= details['quantity'] %></span></p>
+              <% end %>
+            </td>
+            <td class="py-2 px-4 text-center font-semibold text-green-600"><%= number_to_currency(order.total_amount) %></td>
+            <td class="py-2 px-4 text-center"><%= order.address %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <p class="text-gray-500 mt-4">You have no orders in the last 7 days.</p>
+<% end %>

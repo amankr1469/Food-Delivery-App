@@ -61,7 +61,8 @@ module AuthHelper
   
       begin
         @user.save!
-        { message: 'User registered successfully' }
+        RegisteredMailerJob.perform_in(1.hour, @user.id)
+        { message: 'User registered successfully'}
       rescue ActiveRecord::RecordInvalid => e
         error!({ message: e.message }, 422)
       end

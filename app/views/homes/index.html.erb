@@ -4,25 +4,68 @@
         <div class="flex py-4 justify-end " >
           <%= link_to 'Check Out', users_cart_path, class: "inline-block bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600" %>
         </div>
+
+          <div class="flex py-4 justify-end " >
+          <%= link_to 'Order History', order_history_path, class: "inline-block bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600" %>
+        </div>
+         
+         
+<h2 class="mt-3 mb-4 text-2xl font-bold text-blue-600">Select Categories</h2>
+<div class="flex flex-col items-start space-y-3">
+  <%= form_with url: root_path, method: :get, local: true do %>
+    <div class="grid grid-cols-3 gap-4">
+      <div class="flex items-center space-x-2">
+        <%= check_box_tag 'categories[]', 'Appetizer', false, id: 'categories_appetizer', class: 'h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500' %>
+        <%= label_tag 'categories_appetizer', 'Appetizer', class: 'text-sm text-gray-700' %>
+      </div>
+      
+      <div class="flex items-center space-x-2">
+        <%= check_box_tag 'categories[]', 'Main Course', false, id: 'categories_main_course', class: 'h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500' %>
+        <%= label_tag 'categories_main_course', 'Main Course', class: 'text-sm text-gray-700' %>
+      </div>
+      
+      <div class="flex items-center space-x-2">
+        <%= check_box_tag 'categories[]', 'Dessert', false, id: 'categories_dessert', class: 'h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500' %>
+        <%= label_tag 'categories_dessert', 'Dessert', class: 'text-sm text-gray-700' %>
+      </div>
+    </div>
+    
+    <div class="mt-4 flex gap-4">
+      <%= submit_tag "Submit", class: "bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm" %>
+      <%= link_to 'Reset', root_path, class: "bg-gray-200 text-gray-700 px-3 py-1 rounded hover:bg-gray-300 text-sm" %>
+    </div>
+  <% end %>
+</div>
+
+
+
+
     <h2 class="mt-3 mb-4 text-3xl font-bold text-blue-600">Restaurants near you</h2>
 
 <div class="flex flex-row flex-wrap gap-5">
   <% @restaurants.each do |restaurant| %>
-    <div class="overflow-hidden bg-white border border-gray-200 rounded-lg shadow-md w-64">
-      <% if restaurant.image.present? %>
-        <%= image_tag(restaurant.image, class: 'w-full h-48 object-cover') %>
-      <% else %>
+    <div class="overflow-hidden bg-white border border-gray-200 rounded-lg shadow-md w-72">
+      <% if restaurant["image_url"].present? %>
+        <%= image_tag restaurant["image_url"], class: 'w-full h-48 object-cover' %>
+        <% else %>
         <div class="w-full h-48 flex items-center justify-center bg-gray-200">
-          <h3 class="text-gray-500">No image available</h3>
+          <%= image_tag 'default_restaurant_img.avif'%>
         </div>
       <% end %>
-      <div class="p-4">
-        <h5 class="text-lg font-semibold mb-2"><%= restaurant.name %></h5>
-        <p class="text-gray-700 mb-4"><%= restaurant.description %></p>
-        <%= link_to 'Check Food', users_restaurant_path(restaurant.id), class: "inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %> 
+      <div class="p-4"> 
+        <h5 class="text-lg font-semibold mb-2 mt-6"><%= restaurant["name"] %></h5>
+        <p class="text-gray-700 mb-4"><%= restaurant["description"] %></p>
+        <%= link_to 'Check Food', users_restaurant_path(restaurant["id"]), class: "inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %> 
       </div>
     </div>
   <% end %>
+</div>
+
+<div class="flex justify-between mt-5">
+  <% if @restaurant_page > 1 %>
+    <%= link_to 'Previous', root_path(f_page: @food_page, r_page: @restaurant_page - 1, page_size: 10), class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %>
+  <% end %>
+    <%= link_to 'Next', root_path(f_page: @food_page, r_page: @restaurant_page + 1, page_size: 10), class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %>
 </div>
 
 
@@ -30,23 +73,31 @@
 <div class="flex flex-row flex-wrap gap-5">
   <% @foods.each do |food| %>
     <div class="overflow-hidden bg-white border border-gray-200 rounded-lg shadow-md w-72">
-      <% if food.image.present? %>
-        <%= image_tag(food.image, class: 'w-full h-44 object-cover') %>
-      <% else %>
+      <% if food["image_url"].present? %>
+        <%= image_tag(food["image_url"], class: 'w-full h-44 object-cover') %>
+       <% else %>
         <div class="w-full h-44 flex items-center justify-center bg-gray-200">
-          <h3 class="text-gray-500">No image available</h3>
+          <%= image_tag 'default_food_img.jpg'%>
         </div>
       <% end %>
       <div class="p-4">
-        <h5 class="text-lg font-semibold mb-2"><%= food.name %></h5>
-        <h6 class="text-gray-700 mb-4"><%= food.description %></h6>
+        <h5 class="text-lg font-semibold mb-2"><%= food["name"] %></h5>
+        <h6 class="text-gray-700 mb-4">$<%= food["price"] %></h6>
+        <h5 class="text-lg font-semibold mb-2"><%= food["category"] %></h5>
         <div class="flex gap-4">
-          <%= button_to '+', users_add_path(food_id: food.id), method: :post, class: 'bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600' %>
-          <%= button_to '-', users_remove_path(food_id: food.id), method: :post, class: 'bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600' %>
+          <%= button_to '+', users_add_path(food_id: food["id"]), method: :post, class: 'bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600' %>
+          <%= button_to '-', users_remove_path(food_id: food["id"]), method: :post, class: 'bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600' %>
         </div>
       </div>
     </div>
   <% end %>
+</div>
+
+<div class="flex justify-between mt-5">
+  <% if @food_page > 1 %>
+    <%= link_to 'Previous', root_path(r_page: @restaurant_page, f_page: @food_page - 1, page_size: 10, categories: params[:categories]), class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %>
+  <% end %>
+    <%= link_to 'Next', root_path(r_page: @restaurant_page, f_page: @food_page + 1, page_size: 10, categories: params[:categories]), class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %>
 </div>
 
 <br>

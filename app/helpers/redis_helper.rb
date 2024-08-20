@@ -24,11 +24,23 @@ module RedisHelper
     cached_data = get_redis_data(key)
     if cached_data.present?
       JSON.parse(cached_data, object_class: OpenStruct)
+      
     else
-      data = yield
+      data = yield 
       set_redis_data(key, data.to_json)
       set_expire_time(key, REDIS_EXPIRATION_TIME)
       data
     end
+  end
+
+  def invalidate_cache(key_pattern)
+    
+    keys = $redis.keys(key_pattern)
+
+    keys.each do |key|
+      $redis.del(key)
+    end
+    rescue => e
+    Rails.logger.error("Redis error: #{e.message}")
   end
 end

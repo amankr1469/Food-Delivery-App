@@ -1,13 +1,18 @@
-  <div data-controller="previews" class="field">
-    <%= form.label :image %>
-    <%= form.file_field :image, direct_uplaod: true,
-    data: { previews_target: "input", action: "change->previews#preview" } %>
+<div data-controller="previews" class="field mb-4">
+  <%= form.label :image, class: "block text-sm font-medium text-gray-700" %>
+  <%= form.file_field :image, direct_upload: true, 
+    data: { previews_target: "input", action: "change->previews#preview" },
+    class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
 
-    <div class="image-container">
+  <div class="image-container mt-4 flex justify-center">
     <% if @user.image.attached? %>
-      <%= image_tag @user.image, data: { previews_target: "preview" }, class: "image" %>
+      <%= image_tag @user.image, 
+          data: { previews_target: "preview" }, 
+          class: "image w-32 h-32 rounded-full object-cover shadow-md" %>
     <% else %>
-      <%= image_tag "", data: { previews_target: "preview" }, class: "image" %>
+      <%= image_tag "", 
+          data: { previews_target: "preview" }, 
+          class: "image w-32 h-32 rounded-full object-cover shadow-md" %>
     <% end %>
   </div>
- </div>  
+</div>

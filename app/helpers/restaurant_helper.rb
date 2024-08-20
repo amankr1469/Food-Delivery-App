@@ -5,11 +5,11 @@ module RestaurantHelper
     page = params[:page].present? ? params[:page].to_i : 1
     page_size = limit
     offset = (page - 1) * page_size
+    user_id = params[:user_id]
+    cache_key = "admin_#{user_id}_page_#{page}_size_#{page_size}"
 
-    cache_key = "admin_#{@current_user.id}_page_#{page}_size_#{page_size}"
-     
     restaurants = get_cached_data(cache_key) do
-      Restaurant.where(user_id: @current_user.id).limit(page_size).offset(offset)
+      Restaurant.where(user_id: user_id).limit(page_size).offset(offset)
     end
 
     if restaurants.any? 
@@ -24,7 +24,7 @@ module RestaurantHelper
     end
     rescue => e
       error!({ message: 'Failed to retrieve restaurants', error: e.message }, 500)
-    end
+  end
 
   def get_restaurant_details
     begin
@@ -37,9 +37,14 @@ module RestaurantHelper
     end
   end
   
-
   def get_restaurant_foods
-    foods = Food.where("restaurant_id = ?", params[:id]).limit(limit).offset(params[:offset])
+    page = params[:page].present? ? params[:page].to_i : 1
+    page_size = limit
+    offset = (page - 1) * page_size
+    restaurant_id = params[:id].to_i
+    
+    foods = Food.where(restaurant_id: restaurant_id).limit(page_size).offset(offset)
+
     if foods.any?
       { message: 'All the foods of this restaurnat', foods: foods }
     else
@@ -64,6 +69,9 @@ module RestaurantHelper
       restaurant = Restaurant.new(restaurant_params)
       restaurant.user = current_user
       restaurant.save!
+
+      invalidate_cache("admin_#{@current_user.id}_page_*")
+      invalidate_cache("index_restaurant_*")
 
       { message: 'Restaurant created successfully', restaurant: restaurant }
       rescue ActiveRecord::RecordInvalid => e
@@ -95,6 +103,9 @@ module RestaurantHelper
       update_params[:delivery_radius] = params[:delivery_radius] if params[:delivery_radius].present?
 
       restaurant.update!(update_params)
+
+      invalidate_cache("admin_#{@current_user.id}_page_*")
+
       { message: 'Restaurant details updated successfully', restaurant: restaurant }
     rescue ActiveRecord::RecordNotFound
       error!({ message: 'Restaurant not found' }, 404)
@@ -109,6 +120,10 @@ module RestaurantHelper
     begin
       restaurant = Restaurant.find(params[:id])
       restaurant.destroy!
+
+      invalidate_cache("admin_#{@current_user.id}_page_*")
+      invalidate_cache("index_restaurant_*")
+
       { message: 'Restaurant successfully deleted' }
     rescue ActiveRecord::RecordNotFound
       error!({ message: 'Restaurant not found' }, 404)

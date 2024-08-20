@@ -1,33 +1,61 @@
-<p id="notice" class="text-green-600"><%= notice %></p>
+<% if flash[:notice] %>
+  <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+    <span class="block sm:inline"><%= flash[:notice] %></span>
+  </div>
+<% elsif flash[:alert] %>
+  <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+    <span class="block sm:inline"><%= flash[:alert] %></span>
+  </div>
+<% end %>
 
 <h1 class="text-2xl font-bold mb-4">Foods</h1>
+
+<%# <nav class="bg-gray-100 border-b border-gray-200">
+  <div class="container mx-auto px-4 py-2 flex items-center justify-between">
+    <h2 class="text-lg font-semibold text-blue-600" >GoFoodie</h2>
+
+    <div class="flex  lg:flex lg:items-center lg:space-x-4" id="navbarSupportedContent">
+      <form class="flex items-center space-x-2" role="search" action="users_search_path">
+        <input class="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" type="search" name="q" placeholder="Search" aria-label="Search">
+        <button class="px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50" type="submit">Search</button>
+      </form>
+    </div>
+  </div>
+</nav> %>
 
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
   <% @foods.each do |food| %>
     <div class="bg-white rounded-lg shadow-md overflow-hidden">
       <div class="p-4">
-        <h2 class="text-xl font-semibold mb-2"><%= food.name %></h2>
-        <p class="text-gray-700 mb-2"><%= food.description %></p>
-        <p class="text-gray-800 font-bold mb-2">Price: <%= food.price %></p>
-        <p class="text-gray-600 mb-2">Category: <%= food.category %></p>
-        <% if food.image.present? %>
-          <div class="mb-4">
-            <%= image_tag(food.image, class: 'w-full h-48 object-cover') %>
-          </div>
+        <h2 class="text-xl font-semibold mb-2"><%= food["name"] %></h2>
+        <p class="text-gray-700 mb-2"><%= food["description"] %></p>
+        <p class="text-gray-800 font-bold mb-2">Price: <%= food["price"] %></p>
+        <p class="text-gray-600 mb-2">Category: <%= food["category"] %></p>
+      <div class="flex items-center mb-4">
+        <% if food["image_url"].present? %>
+          <%= image_tag food["image_url"], class: 'w-24 h-24 rounded-full mr-4 object-cover' %>
         <% else %>
-          <div class="mb-4 text-center">
-            <p class="text-gray-500">No image available</p>
+          <div class="w-24 h-24 rounded-full flex items-center justify-center mr-4">
+            <%= image_tag 'default_food_img.jpg', class: "w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center mr-4"%>
           </div>
         <% end %>
+      </div>
         <div class="flex justify-between">
-          <%= link_to 'Show', food, class: 'inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500' %>
-          <%= link_to 'Edit', edit_food_path(food), class: 'inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500' %>
+          <%= link_to 'Show', food_path(food["id"]), class: 'inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500' %>
+          <%= link_to 'Edit', edit_food_path(food["id"]), class: 'inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500' %>
         </div>
       </div>
     </div>
   <% end %>
 </div>
-
+ <%if @foods.present? %>
+<div class="flex justify-between mt-5">
+  <% if @page > 1 %>
+    <%= link_to 'Previous', restaurant_path(page: @page - 1, page_size: 10), class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %>
+  <% end %>
+    <%= link_to 'Next', restaurant_path(page: @page + 1, page_size: 10), class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %>
+</div>
+<%end%>
 <div class="mt-6">
   <%= link_to 'New Food', new_food_path(id: params[:id]), class: 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded' %>
 </div>

@@ -2,7 +2,9 @@ module FoodEntity
   class Index < Grape::Entity
     expose :id,
            :name, 
-           :price
+           :price,
+           :category,
+           :image_url
   end
 
   class Details < Grape::Entity
@@ -10,7 +12,7 @@ module FoodEntity
            :name, 
            :price,
            :description,
-           :category
-
+           :category,
+           :image_url
   end
 end

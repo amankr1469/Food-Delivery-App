@@ -112,7 +112,7 @@ RSpec.describe "Food API", type: :request do
         delete "/api/v2/admin/food/delete?id=#{food.id}"
         expect(response).to have_http_status(:ok)
         expect(json['message']).to eq('Food item successfully deleted')
-        expect(Food.find_by(id: food.id)).to be_nil
+        expect(Food.find(id: food.id)).to be_nil
       end
 
       it 'returns error if food item not found' do

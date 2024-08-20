@@ -10,7 +10,7 @@
         </div>
       <% else %>
         <div class="mb-4">
-          <h3 class="text-gray-500">No logo available</h3>
+           <%= image_tag 'default_restaurant_img.avif',class: 'w-36 h-36 object-cover rounded-full mx-auto', alt: @restaurant.name%>
         </div>
       <% end %>
     </div>
@@ -29,11 +29,11 @@
       <div class="bg-white border border-gray-200 rounded-lg shadow-md p-4">
         <% if food.image.present? %>
           <div class="mb-4">
-            <%= image_tag(food.image, class: 'w-24 h-24 object-cover rounded mx-auto', alt: food.name) %>
+            <%= image_tag food.image, class: 'w-24 h-24 object-cover rounded mx-auto', alt: food.name %>
           </div>
         <% else %>
           <div class="mb-4">
-            <h3 class="text-gray-500 text-center">No image available</h3>
+            <%= image_tag 'default_food_img.jpg' , class: 'w-24 h-24 object-cover rounded mx-auto', alt: food.name%>
           </div>
         <% end %>
         <h5 class="text-xl font-semibold text-gray-900 mb-2 text-center"><%= food.name %></h5>
@@ -46,7 +46,15 @@
       </div>
     <% end %>
   </div>
-  
+
+ <%if @food_items.present? %>
+   <div class="flex justify-between mt-5">
+  <% if @page > 1 %>
+    <%= link_to 'Previous', users_restaurant_path(page: @page - 1,  page_size: 10), class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %>
+  <% end %>
+    <%= link_to 'Next', users_restaurant_path(page: @page + 1, page_size: 10), class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %>
+</div>
+<%end%>  
   <div class="mt-8">
     <%= link_to 'Back to Home', root_path, class: 'inline-block bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600' %>
   </div>

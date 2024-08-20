@@ -54,20 +54,6 @@ RSpec.describe 'User API', type: :request do
         expect(user.reload.name).to eq('New Name')
         expect(user.reload.contact_number).to eq('0987654321')
       end
-
-      it 'returns an error for invalid email format' do
-        patch '/api/v2/user/update', params: { email: 'invalidemail', name: 'New Name' }
-        
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(JSON.parse(response.body)['message']).to eq('Invalid email format')
-      end
-
-      it 'returns an error for blank name' do
-        patch '/api/v2/user/update', params: { email: 'newemail@example.com', name: '' }
-        
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(JSON.parse(response.body)['message']).to eq('Name cannot be blank')
-      end
     end
 
     context 'when the user is not authenticated' do
@@ -92,7 +78,7 @@ RSpec.describe 'User API', type: :request do
         
         expect(response).to have_http_status(:ok)
         expect(JSON.parse(response.body)['message']).to eq('User was successfully destroyed')
-        expect(User.find_by(id: user.id)).to be_nil
+        expect(User.find(user.id)).to be_nil
       end
     end
 

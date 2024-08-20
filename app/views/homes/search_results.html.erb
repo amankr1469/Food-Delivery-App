@@ -13,9 +13,9 @@
                 <%= image_tag(restaurant.image, class: 'w-24 h-24 object-cover rounded', alt: "#{restaurant.name} Logo") %>
               </div>
             <% else %>
-              <p class="text-gray-500 mb-4">No logo available</p>
+              <%= image_tag 'default_restaurant_img.avif', class: 'w-24 h-24 object-cover rounded', alt: "#{restaurant.name} Logo"%>
             <% end %>
-            <%= link_to 'Check Food', users_restaurant_path(restaurant.id), class: "inline-block bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %> 
+            <%= link_to 'Check Food', users_restaurant_path(restaurant.id), class: "inline-block bg-blue-500 text-white mt-4 px-4 py-2 rounded hover:bg-blue-600" %> 
           </li>
         <% end %>
       </ul>
@@ -39,7 +39,7 @@
                 <%= image_tag(food.image, class: 'w-24 h-24 object-cover rounded', alt: "#{food.name} Image") %>
               </div>
             <% else %>
-              <p class="text-gray-500 mb-4">No image available</p>
+               <%= image_tag 'default_food_img.jpg', class: 'w-24 h-24 object-cover rounded', alt: "#{food.name} Image"%>
             <% end %>
             <p class="text-gray-700 mb-4">Price: <%= food.price %></p>
             <div class="flex gap-5">

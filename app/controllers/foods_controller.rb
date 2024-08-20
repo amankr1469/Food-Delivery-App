@@ -1,9 +1,10 @@
 class FoodsController < ApplicationController
+  include RedisHelper
   before_action :authenticate_request
   before_action :set_food, only: %i[ show edit update destroy ]
 
   def index
-    @foods = Food.all
+    
   end
 
   def show
@@ -18,36 +19,47 @@ class FoodsController < ApplicationController
 
   def create
     @food = Food.new(food_params)
-    respond_to do |format|
-      if @food.save
-        format.html { redirect_to food_url(@food), notice: "Food was successfully created." }
-        format.json { render :show, status: :created, location: @food }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @food.errors, status: :unprocessable_entity }
+    begin
+    @food.save!
+      if @food.image.attached?
+        @food.update(image_url: url_for(@food.image))
       end
+      invalidate_cache("admin_#{@current_user.id}_page_*")
+      invalidate_cache("index_food_*")
+      redirect_to @food, notice: 'Food was successfully created.'
+    rescue ActiveRecord::RecordInvalid => e
+      render :new, status: :unprocessable_entity, notice: "Failed to create restaurant: #{e.message}"
+    rescue => e
+      render :new, status: :unprocessable_entity, alert: "Unexpected error: #{e.message}"
     end
   end
 
   def update
-    respond_to do |format|
-      if @food.update(food_params)
-        format.html { redirect_to food_url(@food), notice: "Food was successfully updated." }
-        format.json { render :show, status: :ok, location: @food }
-      else
-        format.html { render :edit, status: :unprocessable_entity }
-        format.json { render json: @food.errors, status: :unprocessable_entity }
+    begin
+    @food.update!(food_params)
+      if @food.image.attached?
+        @food.update!(image_url: url_for(@food.image))
       end
+      invalidate_cache("admin_#{@current_user.id}_page_*")
+      invalidate_cache("index_food_*")
+      redirect_to food_url(@food), notice: "Food was successfully updated."
+    rescue ActiveRecord::RecordInvalid => e
+      render :edit, status: :unprocessable_entity, notice: "Failed to create restaurant: #{e.message}"
+    rescue => e
+      render :edit, status: :unprocessable_entity, alert: "Failed to update food: #{e.message}"
     end
   end
 
   def destroy
-    @food.destroy
-
+    @food.destroy!
+    invalidate_cache("admin_#{@current_user.id}_page_*")
+    invalidate_cache("index_food_*")
     respond_to do |format|
       format.html { redirect_to restaurants_url, notice: "Food was successfully destroyed." }
       format.json { head :no_content }
     end
+  rescue ActiveRecord::RecordNotDestroyed => e
+    redirect_to foods_url, notice: "Failed to destroy food: #{e.message}"
   end
 
   private

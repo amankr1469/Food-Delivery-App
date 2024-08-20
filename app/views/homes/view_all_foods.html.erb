@@ -1,39 +1,34 @@
-<div class="container mx-auto p-4">
-  <h1 class="text-4xl font-bold text-center text-blue-600 mb-8">Your Order</h1>
-
-  <%= form_with url: users_checkout_path, method: :post, class: 'space-y-6' do %>
-    <h2 class="text-2xl font-semibold text-gray-800 mb-4">Cart</h2>
-    <% total_cost = 0 %>
-    <% @food_results.each do |food_id, item| %>
-      <div class="bg-white border border-gray-200 rounded-lg shadow-md p-6 flex items-center gap-4">
-        <div class="w-24 h-24 flex-shrink-0">
-          <% if item["photo"] && item["photo"]["record"] && item["photo"]["record"]["image"] %>
-            <%= image_tag(item["photo"]["record"]["image"], class: 'w-full h-full object-cover rounded') %>
-          <% else %>
-            <div class="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500 rounded">
-              No image available
-            </div>
-          <% end %>
+  <h1 class="text-4xl font-bold text-center text-blue-600 mb-8">Search Results</h1>
+<%= link_to 'Home', root_path(), class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %>
+  <div class="mb-8">
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4 mt-4">Foods</h2>
+    <% if @food_results.any? %>
+      <ul class="space-y-4">
+        <% @food_results.each do |food| %>
+          <li class="bg-white border border-gray-200 rounded-lg shadow-md p-4">
+            <h3 class="text-xl font-semibold text-gray-900 mb-2"><%= food["name"] %></h3>
+            <% if food["image_url"].present? %>
+              <div class="mb-4">
+         <%= image_tag foods["image_url"], class: 'w-24 h-24 rounded-full mr-4 object-cover' %>
+              </div>
+            <% else %>
+               <%= image_tag 'default_food_img.jpg', class: 'w-24 h-24 rounded-full mr-4 object-cover'%>
+            <% end %>
+          <div class="flex gap-4">
+          <%= button_to '+', users_add_path(food_id: food["id"]), method: :post, class: 'bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600' %>
+          <%= button_to '-', users_remove_path(food_id: food["id"]), method: :post, class: 'bg-blue-500 text-white px-3 py-2 rounded hover:bg-blue-600' %>
         </div>
-        <div class="flex-grow">
-          <h3 class="text-lg font-semibold text-gray-900"><%= item["name"] %></h3>
-          <p class="text-gray-700">Price: <%= item["price"] %></p>
-          <p class="text-gray-700">Quantity: <%= item["quantity"] %></p>
-          <% total_cost += item["price"].to_f * item["quantity"].to_i %>
-        </div>
-        <div class="flex gap-4">
-          <%= button_to 'Add more', users_add_path(food_id: food_id), method: :post, class: 'bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600' %>
-          <%= button_to 'Remove from Cart', users_remove_path(food_id: food_id), method: :post, class: 'bg-red-500 text-white px-3 py-2 rounded hover:bg-red-600' %>
-        </div>
-      </div>
-    <% end %>
+          </li>
+        <% end %>
+      </ul>
 
-    <div class="bg-gray-100 p-4 rounded shadow-md text-center text-lg font-semibold text-gray-800">
-      Total Cost: <%= total_cost %>
-    </div>
-
-    <div class="text-center">
-      <%= submit_tag 'Checkout', class: 'bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600' %>
-    </div>
+      <div class="flex justify-between mt-5">
+  <% if @page > 1 %>
+    <%= link_to 'Previous', users_search_food_path(page: @page - 1,  page_size: 10, q: params[:q]), class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %>
   <% end %>
+    <%= link_to 'Next', users_search_food_path(page: @page + 1, page_size: 10, q: params[:q]), class: "bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" %>
 </div>
+    <% else %>
+      <p class="text-gray-500">No food found</p>
+    <% end %>
+  </div>

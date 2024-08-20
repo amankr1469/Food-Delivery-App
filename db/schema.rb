@@ -10,9 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2024_07_25_074101) do
+ActiveRecord::Schema.define(version: 2024_08_14_103835) do
 
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_trgm"
   enable_extension "plpgsql"
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -51,6 +52,8 @@ ActiveRecord::Schema.define(version: 2024_07_25_074101) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "restaurant_id", null: false
+    t.string "image_url"
+    t.index ["name"], name: "idx_foods_name_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["restaurant_id"], name: "index_foods_on_restaurant_id"
   end
 
@@ -81,6 +84,8 @@ ActiveRecord::Schema.define(version: 2024_07_25_074101) do
     t.datetime "updated_at", precision: 6, null: false
     t.string "name"
     t.bigint "user_id", null: false
+    t.string "image_url"
+    t.index ["name"], name: "idx_restaurants_name_trgm", opclass: :gin_trgm_ops, using: :gin
     t.index ["user_id"], name: "index_restaurants_on_user_id"
   end
 
@@ -92,6 +97,8 @@ ActiveRecord::Schema.define(version: 2024_07_25_074101) do
     t.string "contact_number"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.string "avatar"
+    t.index ["email"], name: "users_unique_email_idx", unique: true
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

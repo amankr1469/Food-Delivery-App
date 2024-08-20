@@ -2,7 +2,8 @@ module RestaurantEntity
   class Index < Grape::Entity
     expose :id, 
            :name, 
-           :description
+           :description,
+           :image_url
   end
 
   class Details < Grape::Entity
@@ -14,6 +15,7 @@ module RestaurantEntity
            :email, 
            :description, 
            :opening_hours, 
-           :delivery_radius
+           :delivery_radius,
+           :image_url
   end
 end
